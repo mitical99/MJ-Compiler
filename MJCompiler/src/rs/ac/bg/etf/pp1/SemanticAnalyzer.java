@@ -165,7 +165,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(ConstBoolDeclaration boolDecl) {
 		Obj node = Tab.insert(Obj.Con, boolDecl.getVarName(), currLineType);
-		//node.setAdr(boolDecl.getConstValue());
 	}
 	
 	
