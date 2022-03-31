@@ -155,7 +155,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(ConstCharDeclaration charDecl) {
 		Obj node = Tab.insert(Obj.Con, charDecl.getVarName(), currLineType);
-		//node.set
+		
 	}
 	
 	public void visit(ConstNumberDeclaration numDecl) {
