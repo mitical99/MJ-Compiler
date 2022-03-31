@@ -1,0 +1,8 @@
+program MJProgram
+int a, b;
+const int c = 'a';
+{
+	int main() {
+		return a;
+	}
+}
