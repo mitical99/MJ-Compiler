@@ -67,8 +67,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currLineType = type.struct;
 	}
 	
-	private boolean checkForErrors(String constName, Struct constType) {
-		if(Tab.find(constName) == Tab.noObj) { //present in table already
+	private boolean checkForConstDeclErrors(String constName, Struct constType) {
+		if(Tab.find(constName) != Tab.noObj) { //present in table already
 			report_error("Constant with name" + constName + "already exists in symbol table", null);
 			return true;
 		}
@@ -83,7 +83,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstNumberDeclaration numConst) {
 		String constName = numConst.getConstName();
 		Integer constValue = numConst.getNumConstValue();
-		if(!this.checkForErrors(constName, Tab.intType))
+		if(this.checkForConstDeclErrors(constName, Tab.intType))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, Tab.intType);
 		constNode.setAdr(constValue);
@@ -92,7 +92,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstCharDeclaration charConst) {
 		String constName = charConst.getConstName();
 		Character constValue = charConst.getCharConstValue();
-		if(!this.checkForErrors(constName, Tab.charType))
+		if(this.checkForConstDeclErrors(constName, Tab.charType))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, Tab.charType);
 		constNode.setAdr(constValue);
@@ -101,13 +101,39 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstBoolDeclaration boolConst) {
 		String constName = boolConst.getConstName();
 		Boolean constValue = boolConst.getBoolConstValue();
-		if(!this.checkForErrors(constName, boolType))
+		if(this.checkForConstDeclErrors(constName, boolType))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, boolType);
 		if(constValue)
 			constNode.setAdr(1);
 		else
 			constNode.setAdr(0);
+	}
+	
+	
+	private boolean checkForVarDeclErrors(String varName) {
+		if(Tab.find(varName) != Tab.noObj) {
+			if(Tab.currentScope.findSymbol(varName) != null) {
+			report_error("Variable with name" + varName + "already exists in symbol table", null);
+			return true;
+			}
+		}
+		return false;
+	}
+	
+	public void visit(Var var) {
+		String varName = var.getVarName();
+		if(this.checkForVarDeclErrors(varName)) 
+			return;
+		Obj varNode = Tab.insert(Obj.Var, varName, currLineType);
+	}
+	
+	public void visit(ArrayVar arrayVar) {
+		String varName = arrayVar.getVarName();
+		if(this.checkForVarDeclErrors(varName)) 
+			return;
+		Struct varType = new Struct(Struct.Array, currLineType);
+		Obj varNode = Tab.insert(Obj.Var, varName, varType);
 	}
 	
 	

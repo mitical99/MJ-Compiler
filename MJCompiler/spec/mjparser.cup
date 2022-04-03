@@ -116,11 +116,11 @@ ConstDecl ::= (ConstNumberDeclaration) IDENT:constName EQUAL NUMBER:numConstValu
 Type ::= (Type) IDENT:typeName;
 
 
-VarDeclLine ::= (VarDeclArray) Type:varType VarDeclLineList:varList SEMI;
+VarDeclLine ::= (VarDeclArray) Type VarDeclLineList SEMI;
 
-VarDeclLineList ::= (VarList) VarDeclLineList:varList COMMA VarDecl:var
+VarDeclLineList ::= (VarList) VarDeclLineList COMMA VarDecl
 				|
-				(SingleVar) VarDecl:var
+				(SingleVar) VarDecl
 				|
 				(ErrorVarDecl) error:l
 				{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :}
