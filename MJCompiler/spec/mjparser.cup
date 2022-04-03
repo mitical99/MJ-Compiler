@@ -66,6 +66,7 @@ nonterminal Relop, AdditionalTerm, MulFactorList, Mulop, Addop, DesignatorFieldL
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
 
@@ -143,7 +144,9 @@ ExtendedClass ::= (Extends) EXTENDS Type
 				
 InsideClassDeclList ::= (InsideClassDeclarationListNoConstr) LBRACE MethodDeclList RBRACE;
 		
-RecordDeclLine ::= (RecordDeclaration) RECORD IDENT LBRACE VarDeclList RBRACE;
+RecordDeclLine ::= (RecordDeclaration) RECORD RecordName LBRACE VarDeclList RBRACE;
+
+RecordName ::= (RecordName) IDENT:recordName;
 
 MethodDecl ::= (MethodDeclaration) MethodTypeName LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
 

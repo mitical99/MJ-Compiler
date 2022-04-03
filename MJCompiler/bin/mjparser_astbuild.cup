@@ -97,6 +97,7 @@ nonterminal DesignatorFieldList DesignatorFieldList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, P1, M2); RESULT.setLine(pleft); :};
 
@@ -147,11 +148,11 @@ ConstDecl ::= (ConstNumberDeclaration) IDENT:constName EQUAL NUMBER:numConstValu
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
 
 
-VarDeclLine ::= (VarDeclArray) Type:varType VarDeclLineList:varList SEMI {: RESULT=new VarDeclArray(varType, varList); RESULT.setLine(varTypeleft); :};
+VarDeclLine ::= (VarDeclArray) Type:T1 VarDeclLineList:V2 SEMI {: RESULT=new VarDeclArray(T1, V2); RESULT.setLine(T1left); :};
 
-VarDeclLineList ::= (VarList) VarDeclLineList:varList COMMA VarDecl:var {: RESULT=new VarList(varList, var); RESULT.setLine(varListleft); :}
+VarDeclLineList ::= (VarList) VarDeclLineList:V1 COMMA VarDecl:V2 {: RESULT=new VarList(V1, V2); RESULT.setLine(V1left); :}
 				|
-				(SingleVar) VarDecl:var {: RESULT=new SingleVar(var); RESULT.setLine(varleft); :}
+				(SingleVar) VarDecl:V1 {: RESULT=new SingleVar(V1); RESULT.setLine(V1left); :}
 				|
 				(ErrorVarDecl) error:l
 				{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :} {: RESULT=new ErrorVarDecl(); :}
@@ -174,7 +175,9 @@ ExtendedClass ::= (Extends) EXTENDS Type:T1 {: RESULT=new Extends(T1); RESULT.se
 				
 InsideClassDeclList ::= (InsideClassDeclarationListNoConstr) LBRACE MethodDeclList:M1 RBRACE {: RESULT=new InsideClassDeclarationListNoConstr(M1); RESULT.setLine(M1left); :};
 		
-RecordDeclLine ::= (RecordDeclaration) RECORD IDENT:I1 LBRACE VarDeclList:V2 RBRACE {: RESULT=new RecordDeclaration(I1, V2); RESULT.setLine(I1left); :};
+RecordDeclLine ::= (RecordDeclaration) RECORD RecordName:R1 LBRACE VarDeclList:V2 RBRACE {: RESULT=new RecordDeclaration(R1, V2); RESULT.setLine(R1left); :};
+
+RecordName ::= (RecordName) IDENT:recordName {: RESULT=new RecordName(recordName); RESULT.setLine(recordNameleft); :};
 
 MethodDecl ::= (MethodDeclaration) MethodTypeName:M1 LPAREN FormPars:F2 RPAREN VarDeclList:V3 LBRACE StatementList:S4 RBRACE {: RESULT=new MethodDeclaration(M1, F2, V3, S4); RESULT.setLine(M1left); :};
 

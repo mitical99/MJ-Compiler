@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 3/3/2022 19:41:31
+// 3/3/2022 19:41:32
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class RecordName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private String typeName;
+    private String recordName;
 
-    public Type (String typeName) {
-        this.typeName=typeName;
+    public RecordName (String recordName) {
+        this.recordName=recordName;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getRecordName() {
+        return recordName;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName=typeName;
+    public void setRecordName(String recordName) {
+        this.recordName=recordName;
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +59,13 @@ public class Type implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
+        buffer.append("RecordName(\n");
 
-        buffer.append(" "+tab+typeName);
+        buffer.append(" "+tab+recordName);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [RecordName]");
         return buffer.toString();
     }
 }

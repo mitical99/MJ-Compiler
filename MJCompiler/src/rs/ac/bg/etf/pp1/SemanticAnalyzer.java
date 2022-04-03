@@ -11,6 +11,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	int printCallCount = 0;
 	int varDeclCount = 0;
 	Struct currLineType = null;
+	Struct currRecord = null;
+	boolean isRecordField = false;
 	public static final Struct boolType = new Struct(Struct.Bool);
 	boolean returnFound = false;
 	boolean errorDetected = false;
@@ -69,8 +71,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private boolean checkForConstDeclErrors(String constName, Struct constType) {
 		if(Tab.find(constName) != Tab.noObj) { //present in table already
+			if(Tab.currentScope.findSymbol(constName) != null) { //present in table and in the same scope
 			report_error("Constant with name" + constName + "already exists in symbol table", null);
 			return true;
+			}
 		}
 		if(!currLineType.equals(constType)) { //Error in type constant and assigned value
 			report_error("Incompatible types of assigned value and declared constant type!", null);
@@ -133,9 +137,39 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if(this.checkForVarDeclErrors(varName)) 
 			return;
 		Struct varType = new Struct(Struct.Array, currLineType);
-		Obj varNode = Tab.insert(Obj.Var, varName, varType);
+		Obj varNode = null;
+		if(isRecordField)
+			varNode = Tab.insert(Obj.Fld, varName, varType);
+		else
+			varNode = Tab.insert(Obj.Var, varName, varType);
 	}
 	
+	private boolean checkForRecordDeclErrors(String recordName) {
+		if(Tab.find(recordName) != Tab.noObj) {
+			report_error("Record name" + recordName + "already declared", null);
+			return true;
+		}
+		return false;
+	}
+	
+	public void visit(RecordName recordName) {
+		String recName = recordName.getRecordName();
+		if(this.checkForRecordDeclErrors(recName))
+			return;
+		
+		isRecordField = true;
+		currRecord = new Struct(Struct.Class);
+		currRecord.setElementType(Tab.noType);
+		recordName.obj = Tab.insert(Obj.Type, recName, currRecord);
+		Tab.openScope();
+	}
+	
+	public void visit(RecordDeclaration recordDecl) {
+		Tab.chainLocalSymbols(currRecord);
+		Tab.closeScope();
+		currRecord = null;
+		isRecordField = false;
+	}
 	
     public boolean passed() {
     	return !errorDetected;
