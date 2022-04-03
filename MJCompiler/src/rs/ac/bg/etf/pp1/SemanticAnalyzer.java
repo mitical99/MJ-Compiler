@@ -10,8 +10,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	int printCallCount = 0;
 	int varDeclCount = 0;
-	Obj currentMethod = null;
-	Obj currentVarTypeLine = null;
 	Struct currLineType = null;
 	boolean returnFound = false;
 	boolean errorDetected = false;
@@ -44,6 +42,28 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(Program program) {
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
+	}
+	
+	public void visit(Type type) {
+		Obj typeNode = Tab.find(type.getTypeName());
+		
+		if(typeNode == Tab.noObj) {
+			report_error("Type " + type.getTypeName() + "not found in symbol table!", type);
+			type.struct = Tab.noType;
+		} else {
+			if(typeNode.getKind() == Obj.Type) {
+				type.struct = typeNode.getType();
+			} else {
+				type.struct = Tab.noType;
+				report_error("Type name isn't in symbol table", type);
+			}
+		}
+		
+		currLineType = type.struct;
+	}
+	
+	public void visit(VarDecl varDecl) {
+		
 	}
 	
 	
