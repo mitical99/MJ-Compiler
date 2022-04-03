@@ -1,24 +1,34 @@
 // generated with ast extension for cup
 // version 0.8
-// 3/3/2022 14:51:33
+// 3/3/2022 18:15:2
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConstCharDeclaration extends ConstDecl {
 
-    private String varName;
+    private String constName;
+    private Character charConstValue;
 
-    public ConstCharDeclaration (String varName) {
-        this.varName=varName;
+    public ConstCharDeclaration (String constName, Character charConstValue) {
+        this.constName=constName;
+        this.charConstValue=charConstValue;
     }
 
-    public String getVarName() {
-        return varName;
+    public String getConstName() {
+        return constName;
     }
 
-    public void setVarName(String varName) {
-        this.varName=varName;
+    public void setConstName(String constName) {
+        this.constName=constName;
+    }
+
+    public Character getCharConstValue() {
+        return charConstValue;
+    }
+
+    public void setCharConstValue(Character charConstValue) {
+        this.charConstValue=charConstValue;
     }
 
     public void accept(Visitor visitor) {
@@ -41,7 +51,10 @@ public class ConstCharDeclaration extends ConstDecl {
         buffer.append(tab);
         buffer.append("ConstCharDeclaration(\n");
 
-        buffer.append(" "+tab+varName);
+        buffer.append(" "+tab+constName);
+        buffer.append("\n");
+
+        buffer.append(" "+tab+charConstValue);
         buffer.append("\n");
 
         buffer.append(tab);

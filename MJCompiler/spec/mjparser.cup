@@ -48,11 +48,12 @@ scan with {:
 
 terminal PROG, LBRACE, RBRACE, SEMI, LPAREN, RPAREN, COMMA, EQUAL, RETURN, PLUS, PRINT, DEC, INC, COLON, VOID;
 terminal DEQUAL, EXTENDS, NEW, GTE, ELSE, IF, DOT, DIV, MINUS, CONST, NOTEQ, AND, LBRACKET, MUL, OR;
-terminal MOD, LS, LSE, BREAK, GT, READ, GOTO, WHILE, CHAR, RBRACKET, DO, CLASS, RECORD, CONTINUE;
+terminal MOD, LS, LSE, BREAK, GT, READ, GOTO, WHILE, RBRACKET, DO, CLASS, RECORD, CONTINUE;
 terminal ENUM, SUPER, THIS;
 terminal Integer NUMBER;
 terminal String IDENT;
 terminal Boolean BOOL;
+terminal Character CHAR;
 
 nonterminal ProgDeclList, ProgDecl, MethodDeclList, VarDeclList;
 nonterminal ConstDecl, ConstDeclLineList, ClassDeclLine, RecordDeclLine,  DesignatorField;
@@ -105,11 +106,11 @@ ConstDeclLineList ::= (ConstList) ConstDeclLineList COMMA ConstDecl
 					{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :}
 					;
 
-ConstDecl ::= (ConstNumberDeclaration) IDENT:varName EQUAL NUMBER:constValue
+ConstDecl ::= (ConstNumberDeclaration) IDENT:constName EQUAL NUMBER:numConstValue
 			|
-			(ConstCharDeclaration) IDENT:varName EQUAL CHAR:constValue
+			(ConstCharDeclaration) IDENT:constName EQUAL CHAR:charConstValue
 			|
-			(ConstBoolDeclaration) IDENT:varName EQUAL BOOL:constValue
+			(ConstBoolDeclaration) IDENT:constName EQUAL BOOL:boolConstValue
 			;
 
 Type ::= (Type) IDENT:typeName;

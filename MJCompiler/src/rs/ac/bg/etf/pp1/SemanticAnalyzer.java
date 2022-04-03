@@ -11,9 +11,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	int printCallCount = 0;
 	int varDeclCount = 0;
 	Struct currLineType = null;
+	public static final Struct boolType = new Struct(Struct.Bool);
 	boolean returnFound = false;
 	boolean errorDetected = false;
 	int nVars;
+	
+	public SemanticAnalyzer() {
+		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
+	}
 	
 	Logger log = Logger.getLogger(getClass());
 	
@@ -62,8 +67,47 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currLineType = type.struct;
 	}
 	
-	public void visit(VarDecl varDecl) {
-		
+	private boolean checkForErrors(String constName, Struct constType) {
+		if(Tab.find(constName) == Tab.noObj) { //present in table already
+			report_error("Constant with name" + constName + "already exists in symbol table", null);
+			return true;
+		}
+		if(!currLineType.equals(constType)) { //Error in type constant and assigned value
+			report_error("Incompatible types of assigned value and declared constant type!", null);
+			return true;
+		}
+		return false;
+	}
+	
+	
+	public void visit(ConstNumberDeclaration numConst) {
+		String constName = numConst.getConstName();
+		Integer constValue = numConst.getNumConstValue();
+		if(!this.checkForErrors(constName, Tab.intType))
+			return;
+		Obj constNode = Tab.insert(Obj.Con, constName, Tab.intType);
+		constNode.setAdr(constValue);
+	}
+	
+	public void visit(ConstCharDeclaration charConst) {
+		String constName = charConst.getConstName();
+		Character constValue = charConst.getCharConstValue();
+		if(!this.checkForErrors(constName, Tab.charType))
+			return;
+		Obj constNode = Tab.insert(Obj.Con, constName, Tab.charType);
+		constNode.setAdr(constValue);
+	}
+	
+	public void visit(ConstBoolDeclaration boolConst) {
+		String constName = boolConst.getConstName();
+		Boolean constValue = boolConst.getBoolConstValue();
+		if(!this.checkForErrors(constName, boolType))
+			return;
+		Obj constNode = Tab.insert(Obj.Con, constName, boolType);
+		if(constValue)
+			constNode.setAdr(1);
+		else
+			constNode.setAdr(0);
 	}
 	
 	

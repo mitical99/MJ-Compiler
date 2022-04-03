@@ -1,34 +1,34 @@
 // generated with ast extension for cup
 // version 0.8
-// 3/3/2022 14:51:33
+// 3/3/2022 18:15:2
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConstBoolDeclaration extends ConstDecl {
 
-    private String varName;
-    private Boolean constValue;
+    private String constName;
+    private Boolean boolConstValue;
 
-    public ConstBoolDeclaration (String varName, Boolean constValue) {
-        this.varName=varName;
-        this.constValue=constValue;
+    public ConstBoolDeclaration (String constName, Boolean boolConstValue) {
+        this.constName=constName;
+        this.boolConstValue=boolConstValue;
     }
 
-    public String getVarName() {
-        return varName;
+    public String getConstName() {
+        return constName;
     }
 
-    public void setVarName(String varName) {
-        this.varName=varName;
+    public void setConstName(String constName) {
+        this.constName=constName;
     }
 
-    public Boolean getConstValue() {
-        return constValue;
+    public Boolean getBoolConstValue() {
+        return boolConstValue;
     }
 
-    public void setConstValue(Boolean constValue) {
-        this.constValue=constValue;
+    public void setBoolConstValue(Boolean boolConstValue) {
+        this.boolConstValue=boolConstValue;
     }
 
     public void accept(Visitor visitor) {
@@ -51,10 +51,10 @@ public class ConstBoolDeclaration extends ConstDecl {
         buffer.append(tab);
         buffer.append("ConstBoolDeclaration(\n");
 
-        buffer.append(" "+tab+varName);
+        buffer.append(" "+tab+constName);
         buffer.append("\n");
 
-        buffer.append(" "+tab+constValue);
+        buffer.append(" "+tab+boolConstValue);
         buffer.append("\n");
 
         buffer.append(tab);

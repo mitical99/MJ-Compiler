@@ -48,11 +48,12 @@ scan with {:
 
 terminal PROG, LBRACE, RBRACE, SEMI, LPAREN, RPAREN, COMMA, EQUAL, RETURN, PLUS, PRINT, DEC, INC, COLON, VOID;
 terminal DEQUAL, EXTENDS, NEW, GTE, ELSE, IF, DOT, DIV, MINUS, CONST, NOTEQ, AND, LBRACKET, MUL, OR;
-terminal MOD, LS, LSE, BREAK, GT, READ, GOTO, WHILE, CHAR, RBRACKET, DO, CLASS, RECORD, CONTINUE;
+terminal MOD, LS, LSE, BREAK, GT, READ, GOTO, WHILE, RBRACKET, DO, CLASS, RECORD, CONTINUE;
 terminal ENUM, SUPER, THIS;
 terminal Integer NUMBER;
 terminal String IDENT;
 terminal Boolean BOOL;
+terminal Character CHAR;
 
 nonterminal ProgDeclList ProgDeclList;
 nonterminal ProgDecl ProgDecl;
@@ -136,11 +137,11 @@ ConstDeclLineList ::= (ConstList) ConstDeclLineList:C1 COMMA ConstDecl:C2 {: RES
 					{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :} {: RESULT=new ConstError(); :}
 					;
 
-ConstDecl ::= (ConstNumberDeclaration) IDENT:varName EQUAL NUMBER:constValue {: RESULT=new ConstNumberDeclaration(varName, constValue); RESULT.setLine(varNameleft); :}
+ConstDecl ::= (ConstNumberDeclaration) IDENT:constName EQUAL NUMBER:numConstValue {: RESULT=new ConstNumberDeclaration(constName, numConstValue); RESULT.setLine(constNameleft); :}
 			|
-			(ConstCharDeclaration) IDENT:varName EQUAL CHAR:constValue {: RESULT=new ConstCharDeclaration(varName); RESULT.setLine(varNameleft); :}
+			(ConstCharDeclaration) IDENT:constName EQUAL CHAR:charConstValue {: RESULT=new ConstCharDeclaration(constName, charConstValue); RESULT.setLine(constNameleft); :}
 			|
-			(ConstBoolDeclaration) IDENT:varName EQUAL BOOL:constValue {: RESULT=new ConstBoolDeclaration(varName, constValue); RESULT.setLine(varNameleft); :}
+			(ConstBoolDeclaration) IDENT:constName EQUAL BOOL:boolConstValue {: RESULT=new ConstBoolDeclaration(constName, boolConstValue); RESULT.setLine(constNameleft); :}
 			;
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
@@ -322,7 +323,7 @@ Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnl
 		|
 		(FactorNumberConstant) NUMBER:N1 {: RESULT=new FactorNumberConstant(N1); RESULT.setLine(N1left); :}
 		|
-		(FactorCharConsant) CHAR {: RESULT=new FactorCharConsant(); :}
+		(FactorCharConsant) CHAR:C1 {: RESULT=new FactorCharConsant(C1); RESULT.setLine(C1left); :}
 		|
 		(FactorBoolConsant) BOOL:B1 {: RESULT=new FactorBoolConsant(B1); RESULT.setLine(B1left); :}
 		|

@@ -1,34 +1,34 @@
 // generated with ast extension for cup
 // version 0.8
-// 3/3/2022 14:51:33
+// 3/3/2022 18:15:2
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConstNumberDeclaration extends ConstDecl {
 
-    private String varName;
-    private Integer constValue;
+    private String constName;
+    private Integer numConstValue;
 
-    public ConstNumberDeclaration (String varName, Integer constValue) {
-        this.varName=varName;
-        this.constValue=constValue;
+    public ConstNumberDeclaration (String constName, Integer numConstValue) {
+        this.constName=constName;
+        this.numConstValue=numConstValue;
     }
 
-    public String getVarName() {
-        return varName;
+    public String getConstName() {
+        return constName;
     }
 
-    public void setVarName(String varName) {
-        this.varName=varName;
+    public void setConstName(String constName) {
+        this.constName=constName;
     }
 
-    public Integer getConstValue() {
-        return constValue;
+    public Integer getNumConstValue() {
+        return numConstValue;
     }
 
-    public void setConstValue(Integer constValue) {
-        this.constValue=constValue;
+    public void setNumConstValue(Integer numConstValue) {
+        this.numConstValue=numConstValue;
     }
 
     public void accept(Visitor visitor) {
@@ -51,10 +51,10 @@ public class ConstNumberDeclaration extends ConstDecl {
         buffer.append(tab);
         buffer.append("ConstNumberDeclaration(\n");
 
-        buffer.append(" "+tab+varName);
+        buffer.append(" "+tab+constName);
         buffer.append("\n");
 
-        buffer.append(" "+tab+constValue);
+        buffer.append(" "+tab+numConstValue);
         buffer.append("\n");
 
         buffer.append(tab);
