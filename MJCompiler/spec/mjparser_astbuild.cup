@@ -200,9 +200,9 @@ FormParams ::= (MoreFormParam) FormParams:F1 COMMA OneFormParam:O2 {: RESULT=new
 			{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :} {: RESULT=new ErrorFormParam(); :}
 			;
 
-OneFormParam ::= (ArrayParam) Type:T1 IDENT:I2 LBRACKET RBRACKET {: RESULT=new ArrayParam(T1, I2); RESULT.setLine(T1left); :}
+OneFormParam ::= (ArrayParam) Type:T1 IDENT:paramName LBRACKET RBRACKET {: RESULT=new ArrayParam(T1, paramName); RESULT.setLine(T1left); :}
 				|
-				(OneElemParam) Type:T1 IDENT:I2 {: RESULT=new OneElemParam(T1, I2); RESULT.setLine(T1left); :}
+				(OneElemParam) Type:T1 IDENT:paramName {: RESULT=new OneElemParam(T1, paramName); RESULT.setLine(T1left); :}
 				;
 
 StatementList ::= (StmtList) StatementList:S1 Statement:S2 {: RESULT=new StmtList(S1, S2); RESULT.setLine(S1left); :}

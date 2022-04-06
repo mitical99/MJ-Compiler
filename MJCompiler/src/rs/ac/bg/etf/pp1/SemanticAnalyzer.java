@@ -10,8 +10,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	int printCallCount = 0;
 	int varDeclCount = 0;
+	int formParamCount = 0;
 	Struct currLineType = null;
 	Struct currRecord = null;
+	Obj currMethod = null;
 	boolean isRecordField = false;
 	public static final Struct boolType = new Struct(Struct.Bool);
 	boolean returnFound = false;
@@ -169,6 +171,58 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.closeScope();
 		currRecord = null;
 		isRecordField = false;
+	}
+	
+	private boolean insertMethodInSymTable(String methodName, Struct retType) {
+		if(Tab.find(methodName) != Tab.noObj) {
+			return false;
+		}
+		Obj methodNode = Tab.insert(Obj.Meth, methodName, retType);
+		Tab.openScope();
+		currMethod = methodNode;
+		return true;
+	}
+	
+	public void visit(NoRetMethodTypeName voidMethodName) {
+		String methodName = voidMethodName.getMethodName();
+		if(!this.insertMethodInSymTable(methodName, Tab.noType)) {
+			report_error("Symbol with name " + methodName + " already exists in symbol table!", voidMethodName);
+		}
+	}
+	
+	public void visit(TypeRetMethodTypeName typeMethodName) {
+		String methodName = typeMethodName.getMethodName();
+		
+		if(!this.insertMethodInSymTable(methodName, currLineType)) {
+			report_error("Symbol with name " + methodName + " already exists in symbol table!", typeMethodName);
+		}
+	}
+	
+	public void visit(OneElemParam singleParam) {
+		String paramName = singleParam.getParamName();
+		if(this.checkForVarDeclErrors(paramName)) {
+			return;
+		}
+		Obj paramNode = Tab.insert(Obj.Var, paramName, currLineType);
+		formParamCount++;
+	}
+	
+	public void visit(ArrayParam arrayParam) {
+		String paramName = arrayParam.getParamName();
+		if(this.checkForVarDeclErrors(paramName)) {
+			return;
+		}
+		Struct varType = new Struct(Struct.Array, currLineType);
+		Obj paramNode = Tab.insert(Obj.Var, paramName, varType);
+		formParamCount++;
+	}
+	
+	public void visit(MethodDeclaration method) {
+		currMethod.setLevel(formParamCount);
+		
+		Tab.chainLocalSymbols(currMethod);
+		currMethod = null;
+		formParamCount = 0;
 	}
 	
     public boolean passed() {

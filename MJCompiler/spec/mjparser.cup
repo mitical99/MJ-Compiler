@@ -169,9 +169,9 @@ FormParams ::= (MoreFormParam) FormParams COMMA OneFormParam
 			{: parser.report_error("Izvrsen oporavak u liniji " + lleft, null);  :}
 			;
 
-OneFormParam ::= (ArrayParam) Type IDENT LBRACKET RBRACKET
+OneFormParam ::= (ArrayParam) Type IDENT:paramName LBRACKET RBRACKET
 				|
-				(OneElemParam) Type IDENT
+				(OneElemParam) Type IDENT:paramName
 				;
 
 StatementList ::= (StmtList) StatementList Statement
