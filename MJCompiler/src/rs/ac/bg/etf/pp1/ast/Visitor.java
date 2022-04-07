@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:29
+// 7/3/2022 22:16:22
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -24,6 +24,7 @@ public interface Visitor {
     public void visit(Factor Factor);
     public void visit(CondFactList CondFactList);
     public void visit(AssignOrErrorStatement AssignOrErrorStatement);
+    public void visit(Designator Designator);
     public void visit(ProgDecl ProgDecl);
     public void visit(Term Term);
     public void visit(MulFactorList MulFactorList);
@@ -65,16 +66,14 @@ public interface Visitor {
     public void visit(NotEqual NotEqual);
     public void visit(DoubleEqual DoubleEqual);
     public void visit(AssignopDerived1 AssignopDerived1);
-    public void visit(ArrayElem ArrayElem);
-    public void visit(ClassField ClassField);
-    public void visit(NoDesignatorFields NoDesignatorFields);
-    public void visit(DesignatorFields DesignatorFields);
-    public void visit(Designator Designator);
+    public void visit(DesignatorOnly DesignatorOnly);
+    public void visit(ArrayElemDesignator ArrayElemDesignator);
+    public void visit(StructFieldDesignator StructFieldDesignator);
     public void visit(FactorExprOnly FactorExprOnly);
     public void visit(FactorNewObjectExpr FactorNewObjectExpr);
     public void visit(FactorNewObjectNoExpr FactorNewObjectNoExpr);
-    public void visit(FactorBoolConsant FactorBoolConsant);
-    public void visit(FactorCharConsant FactorCharConsant);
+    public void visit(FactorBoolConstant FactorBoolConstant);
+    public void visit(FactorCharConstant FactorCharConstant);
     public void visit(FactorNumberConstant FactorNumberConstant);
     public void visit(FactorDesignatorParenOnly FactorDesignatorParenOnly);
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct);

@@ -1,24 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:28
+// 7/3/2022 22:16:21
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ClassField extends DesignatorField {
+public class FactorCharConstant extends Factor {
 
-    private String I1;
+    private Character C1;
 
-    public ClassField (String I1) {
-        this.I1=I1;
+    public FactorCharConstant (Character C1) {
+        this.C1=C1;
     }
 
-    public String getI1() {
-        return I1;
+    public Character getC1() {
+        return C1;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setC1(Character C1) {
+        this.C1=C1;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +39,13 @@ public class ClassField extends DesignatorField {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ClassField(\n");
+        buffer.append("FactorCharConstant(\n");
 
-        buffer.append(" "+tab+I1);
+        buffer.append(" "+tab+C1);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ClassField]");
+        buffer.append(") [FactorCharConstant]");
         return buffer.toString();
     }
 }

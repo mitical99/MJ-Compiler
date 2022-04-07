@@ -295,9 +295,9 @@ Factor ::= (FactorDesignatorOnly) Designator:d
 		|
 		(FactorNumberConstant) NUMBER
 		|
-		(FactorCharConsant) CHAR
+		(FactorCharConstant) CHAR
 		|
-		(FactorBoolConsant) BOOL
+		(FactorBoolConstant) BOOL
 		|
 		(FactorNewObjectNoExpr) NEW Type
 		|
@@ -306,17 +306,13 @@ Factor ::= (FactorDesignatorOnly) Designator:d
 		(FactorExprOnly) LPAREN Expr RPAREN
 		;
 
-Designator ::= (Designator) IDENT:name DesignatorFieldList;
+Designator ::= (StructFieldDesignator) Designator DOT IDENT:field
+			|
+			(ArrayElemDesignator) Designator LBRACKET Expr RBRACKET
+			|
+			(DesignatorOnly) IDENT:name
+			;
 
-DesignatorFieldList ::= (DesignatorFields) DesignatorFieldList DesignatorField
-					|
-					(NoDesignatorFields) /* epsilon */
-					;
-					
-DesignatorField ::= (ClassField) DOT IDENT
-				|
-				(ArrayElem) LBRACKET Expr RBRACKET
-				;
 
 Assignop ::= EQUAL;
 

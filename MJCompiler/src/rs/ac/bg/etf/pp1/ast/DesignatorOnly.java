@@ -1,24 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:28
+// 7/3/2022 22:16:21
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FactorCharConsant extends Factor {
+public class DesignatorOnly extends Designator {
 
-    private Character C1;
+    private String name;
 
-    public FactorCharConsant (Character C1) {
-        this.C1=C1;
+    public DesignatorOnly (String name) {
+        this.name=name;
     }
 
-    public Character getC1() {
-        return C1;
+    public String getName() {
+        return name;
     }
 
-    public void setC1(Character C1) {
-        this.C1=C1;
+    public void setName(String name) {
+        this.name=name;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +39,13 @@ public class FactorCharConsant extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FactorCharConsant(\n");
+        buffer.append("DesignatorOnly(\n");
 
-        buffer.append(" "+tab+C1);
+        buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FactorCharConsant]");
+        buffer.append(") [DesignatorOnly]");
         return buffer.toString();
     }
 }

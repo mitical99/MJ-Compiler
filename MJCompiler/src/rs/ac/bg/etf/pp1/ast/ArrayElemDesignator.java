@@ -1,17 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:28
+// 7/3/2022 22:16:21
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ArrayElem extends DesignatorField {
+public class ArrayElemDesignator extends Designator {
 
+    private Designator Designator;
     private Expr Expr;
 
-    public ArrayElem (Expr Expr) {
+    public ArrayElemDesignator (Designator Designator, Expr Expr) {
+        this.Designator=Designator;
+        if(Designator!=null) Designator.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
+    }
+
+    public Designator getDesignator() {
+        return Designator;
+    }
+
+    public void setDesignator(Designator Designator) {
+        this.Designator=Designator;
     }
 
     public Expr getExpr() {
@@ -27,15 +38,18 @@ public class ArrayElem extends DesignatorField {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Designator!=null) Designator.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Designator!=null) Designator.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Designator!=null) Designator.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -43,7 +57,13 @@ public class ArrayElem extends DesignatorField {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ArrayElem(\n");
+        buffer.append("ArrayElemDesignator(\n");
+
+        if(Designator!=null)
+            buffer.append(Designator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         if(Expr!=null)
             buffer.append(Expr.toString("  "+tab));
@@ -52,7 +72,7 @@ public class ArrayElem extends DesignatorField {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ArrayElem]");
+        buffer.append(") [ArrayElemDesignator]");
         return buffer.toString();
     }
 }

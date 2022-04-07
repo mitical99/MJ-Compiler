@@ -5,16 +5,15 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FuncCall extends DesignatorStatement {
+public class StructFieldDesignator extends Designator {
 
     private Designator Designator;
-    private ActParams ActParams;
+    private String field;
 
-    public FuncCall (Designator Designator, ActParams ActParams) {
+    public StructFieldDesignator (Designator Designator, String field) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
-        this.ActParams=ActParams;
-        if(ActParams!=null) ActParams.setParent(this);
+        this.field=field;
     }
 
     public Designator getDesignator() {
@@ -25,12 +24,12 @@ public class FuncCall extends DesignatorStatement {
         this.Designator=Designator;
     }
 
-    public ActParams getActParams() {
-        return ActParams;
+    public String getField() {
+        return field;
     }
 
-    public void setActParams(ActParams ActParams) {
-        this.ActParams=ActParams;
+    public void setField(String field) {
+        this.field=field;
     }
 
     public void accept(Visitor visitor) {
@@ -39,25 +38,22 @@ public class FuncCall extends DesignatorStatement {
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
-        if(ActParams!=null) ActParams.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
-        if(ActParams!=null) ActParams.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
-        if(ActParams!=null) ActParams.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FuncCall(\n");
+        buffer.append("StructFieldDesignator(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -65,14 +61,11 @@ public class FuncCall extends DesignatorStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ActParams!=null)
-            buffer.append(ActParams.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
+        buffer.append(" "+tab+field);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FuncCall]");
+        buffer.append(") [StructFieldDesignator]");
         return buffer.toString();
     }
 }

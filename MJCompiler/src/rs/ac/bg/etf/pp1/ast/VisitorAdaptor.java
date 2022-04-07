@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:29
+// 7/3/2022 22:16:22
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -24,6 +24,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Factor Factor) { }
     public void visit(CondFactList CondFactList) { }
     public void visit(AssignOrErrorStatement AssignOrErrorStatement) { }
+    public void visit(Designator Designator) { }
     public void visit(ProgDecl ProgDecl) { }
     public void visit(Term Term) { }
     public void visit(MulFactorList MulFactorList) { }
@@ -65,16 +66,14 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NotEqual NotEqual) { visit(); }
     public void visit(DoubleEqual DoubleEqual) { visit(); }
     public void visit(AssignopDerived1 AssignopDerived1) { visit(); }
-    public void visit(ArrayElem ArrayElem) { visit(); }
-    public void visit(ClassField ClassField) { visit(); }
-    public void visit(NoDesignatorFields NoDesignatorFields) { visit(); }
-    public void visit(DesignatorFields DesignatorFields) { visit(); }
-    public void visit(Designator Designator) { visit(); }
+    public void visit(DesignatorOnly DesignatorOnly) { visit(); }
+    public void visit(ArrayElemDesignator ArrayElemDesignator) { visit(); }
+    public void visit(StructFieldDesignator StructFieldDesignator) { visit(); }
     public void visit(FactorExprOnly FactorExprOnly) { visit(); }
     public void visit(FactorNewObjectExpr FactorNewObjectExpr) { visit(); }
     public void visit(FactorNewObjectNoExpr FactorNewObjectNoExpr) { visit(); }
-    public void visit(FactorBoolConsant FactorBoolConsant) { visit(); }
-    public void visit(FactorCharConsant FactorCharConsant) { visit(); }
+    public void visit(FactorBoolConstant FactorBoolConstant) { visit(); }
+    public void visit(FactorCharConstant FactorCharConstant) { visit(); }
     public void visit(FactorNumberConstant FactorNumberConstant) { visit(); }
     public void visit(FactorDesignatorParenOnly FactorDesignatorParenOnly) { visit(); }
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct) { visit(); }

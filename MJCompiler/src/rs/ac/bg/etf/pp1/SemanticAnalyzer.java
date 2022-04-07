@@ -14,6 +14,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	Struct currLineType = null;
 	Struct currRecord = null;
 	Obj currMethod = null;
+	String addOp = null;
+	String mulOp = null;
+	String relOp = null;
 	boolean isRecordField = false;
 	public static final Struct boolType = new Struct(Struct.Bool);
 	boolean returnFound = false;
@@ -223,6 +226,98 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.chainLocalSymbols(currMethod);
 		currMethod = null;
 		formParamCount = 0;
+		Tab.closeScope();
+	}
+	
+	public void visit(FactorNumberConstant factor) {
+		factor.struct = Tab.intType;
+	}
+	
+	public void visit(FactorCharConstant factor) {
+		factor.struct = Tab.charType;
+	}
+	
+	public void visit(FactorBoolConstant factor) {
+		factor.struct = boolType;
+	}
+	
+//	public void visit(FactorNewObjectNoExpr factor) {
+//		factor.struct = currLineType;
+//	}
+	
+	public void visit(DesignatorOnly designator) {
+		String name = designator.getName();
+		Obj node = Tab.find(name);
+		if(node == Tab.noObj) {
+			report_error("Variable with name " + name + " not found in symbol table!", designator);
+			return;
+		}
+		designator.obj = node; 
+	}
+	
+	public void visit(ArrayElemDesignator arrayDesignator) {
+		String name = arrayDesignator.getDesignator().obj.getName();
+		if(arrayDesignator.getDesignator().obj.getType().getKind() != Struct.Array) {
+			report_error("Variable with name " + name + "isn't array!" , arrayDesignator);
+			arrayDesignator.obj = Tab.noObj;
+			return;
+		}
+		if(arrayDesignator.getExpr().struct != Tab.intType) {
+			report_error("Index of an array must be integer type!", arrayDesignator);
+			arrayDesignator.obj = Tab.noObj;
+			return;
+		}
+		Struct type = arrayDesignator.getDesignator().obj.getType().getElemType();
+		
+		arrayDesignator.obj = new Obj(Obj.Elem, name, type);
+	}
+	
+	public void visit(StructFieldDesignator structDesignator) {
+		//TO-DO
+	}
+	
+	public void visit(DoubleEqual op) {
+		relOp = "==";
+	}
+	
+	public void visit(NotEqual op) {
+		relOp = "!=";
+	}
+	
+	public void visit(Greater op) {
+		relOp = ">";
+	}
+	
+	public void visit(GreaterOrEqual op) {
+		relOp = ">=";
+	}
+	
+	public void visit(Less op) {
+		relOp = "<";
+	}
+	
+	public void visit(LessOrEqual op) {
+		relOp = "<=";
+	}
+	
+	public void visit(Plus op) {
+		addOp = "+";
+	}
+	
+	public void visit(Minus op) {
+		addOp = "-";
+	}
+	
+	public void visit(Multiply op) {
+		mulOp = "*";
+	}
+	
+	public void visit(Division op) {
+		mulOp = "/";
+	}
+	
+	public void visit(Moduo op) {
+		mulOp = "%";
 	}
 	
     public boolean passed() {

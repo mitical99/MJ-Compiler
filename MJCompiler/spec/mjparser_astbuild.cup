@@ -326,9 +326,9 @@ Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnl
 		|
 		(FactorNumberConstant) NUMBER:N1 {: RESULT=new FactorNumberConstant(N1); RESULT.setLine(N1left); :}
 		|
-		(FactorCharConsant) CHAR:C1 {: RESULT=new FactorCharConsant(C1); RESULT.setLine(C1left); :}
+		(FactorCharConstant) CHAR:C1 {: RESULT=new FactorCharConstant(C1); RESULT.setLine(C1left); :}
 		|
-		(FactorBoolConsant) BOOL:B1 {: RESULT=new FactorBoolConsant(B1); RESULT.setLine(B1left); :}
+		(FactorBoolConstant) BOOL:B1 {: RESULT=new FactorBoolConstant(B1); RESULT.setLine(B1left); :}
 		|
 		(FactorNewObjectNoExpr) NEW Type:T1 {: RESULT=new FactorNewObjectNoExpr(T1); RESULT.setLine(T1left); :}
 		|
@@ -337,17 +337,13 @@ Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnl
 		(FactorExprOnly) LPAREN Expr:E1 RPAREN {: RESULT=new FactorExprOnly(E1); RESULT.setLine(E1left); :}
 		;
 
-Designator ::= (Designator) IDENT:name DesignatorFieldList:D1 {: RESULT=new Designator(name, D1); RESULT.setLine(nameleft); :};
+Designator ::= (StructFieldDesignator) Designator:D1 DOT IDENT:field {: RESULT=new StructFieldDesignator(D1, field); RESULT.setLine(D1left); :}
+			|
+			(ArrayElemDesignator) Designator:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ArrayElemDesignator(D1, E2); RESULT.setLine(D1left); :}
+			|
+			(DesignatorOnly) IDENT:name {: RESULT=new DesignatorOnly(name); RESULT.setLine(nameleft); :}
+			;
 
-DesignatorFieldList ::= (DesignatorFields) DesignatorFieldList:D1 DesignatorField:D2 {: RESULT=new DesignatorFields(D1, D2); RESULT.setLine(D1left); :}
-					|
-					(NoDesignatorFields) {: RESULT=new NoDesignatorFields(); :} /* epsilon */
-					;
-					
-DesignatorField ::= (ClassField) DOT IDENT:I1 {: RESULT=new ClassField(I1); RESULT.setLine(I1left); :}
-				|
-				(ArrayElem) LBRACKET Expr:E1 RBRACKET {: RESULT=new ArrayElem(E1); RESULT.setLine(E1left); :}
-				;
 
 Assignop ::= EQUAL {: RESULT=new AssignopDerived1(); :};
 

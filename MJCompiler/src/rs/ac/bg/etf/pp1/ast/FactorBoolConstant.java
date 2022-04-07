@@ -1,13 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/3/2022 22:17:28
+// 7/3/2022 22:16:21
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoDesignatorFields extends DesignatorFieldList {
+public class FactorBoolConstant extends Factor {
 
-    public NoDesignatorFields () {
+    private Boolean B1;
+
+    public FactorBoolConstant (Boolean B1) {
+        this.B1=B1;
+    }
+
+    public Boolean getB1() {
+        return B1;
+    }
+
+    public void setB1(Boolean B1) {
+        this.B1=B1;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +39,13 @@ public class NoDesignatorFields extends DesignatorFieldList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoDesignatorFields(\n");
+        buffer.append("FactorBoolConstant(\n");
+
+        buffer.append(" "+tab+B1);
+        buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [NoDesignatorFields]");
+        buffer.append(") [FactorBoolConstant]");
         return buffer.toString();
     }
 }
