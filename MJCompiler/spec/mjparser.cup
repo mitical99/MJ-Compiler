@@ -60,13 +60,15 @@ nonterminal ConstDecl, ConstDeclLineList, ClassDeclLine, RecordDeclLine,  Design
 nonterminal VarDeclLine, ConstDeclLine, OneFormParam, AssignOrErrorStatement;
 nonterminal ExtendedClass, InsideClassDeclList, FormPars, StatementList, DesignatorStatement;
 nonterminal FormParams, Statement, SingleStatement, Label, Statements;
-nonterminal Assignop, ExprList, Matched, Unmatched;
+nonterminal Assignop, Matched, Unmatched;
 nonterminal ConditionTermList, ConditionTerm, CondFactList, CondFact, ActParams, Condition;
 nonterminal Relop, AdditionalTerm, MulFactorList, Mulop, Addop, DesignatorFieldList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
+nonterminal ActPars;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
 
@@ -225,12 +227,14 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 
 DesignatorStatement ::= (AssignStmt) Designator:dest Assignop AssignOrErrorStatement
 					|
-					(FuncCall) Designator LPAREN ActParams RPAREN SEMI
+					(FuncCall) FunctionName LPAREN ActParams RPAREN SEMI
 					|
 					(IncStmt) Designator INC SEMI
 					|
 					(DecStmt) Designator DEC SEMI		
-					;	
+					;
+
+FunctionName ::= (FunctionNameDesignator) Designator:funcName;
 
 AssignOrErrorStatement ::= (ExprStatement) Expr SEMI
 						|
@@ -249,11 +253,14 @@ ConditionTermList ::= (OrConditions) ConditionTermList OR ConditionTerm
 					(NoMoreOrConditions) /* epsilon */
 					;
 
-ActParams ::= (ActParameters) Expr ExprList;
+ActPars ::= (ActualParameters) ActParams
+		|
+		(NoParameters) /* epsilon */
+		;
 
-ExprList ::= (ExpressionList) ExprList COMMA Expr
+ActParams ::= (MoreParameters) ActParams COMMA Expr:e
 			|
-			(NoExprList) /* epsilon */
+			(FirstParam) Expr:e
 			;
 
 ConditionTerm ::= (ConditionTerms) CondFact CondFactList;
@@ -289,9 +296,7 @@ MulFactorList ::= (FactorList) MulFactorList Mulop Factor
 	
 Factor ::= (FactorDesignatorOnly) Designator:d
 		|
-		(FactorDesignatorWithAct) Designator:func LPAREN ActParams RPAREN
-		|
-		(FactorDesignatorParenOnly) Designator LPAREN RPAREN
+		(FactorDesignatorWithAct) FunctionName LPAREN ActPars RPAREN
 		|
 		(FactorNumberConstant) NUMBER
 		|

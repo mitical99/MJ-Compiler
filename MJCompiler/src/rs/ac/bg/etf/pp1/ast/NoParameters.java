@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:21
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoExprList extends ExprList {
+public class NoParameters extends ActPars {
 
-    public NoExprList () {
+    public NoParameters () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoExprList extends ExprList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoExprList(\n");
+        buffer.append("NoParameters(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoExprList]");
+        buffer.append(") [NoParameters]");
         return buffer.toString();
     }
 }

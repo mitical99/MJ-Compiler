@@ -1,15 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:21
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ExprList implements SyntaxNode {
+public abstract class FunctionName implements SyntaxNode {
 
     private SyntaxNode parent;
 
     private int line;
+
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     public SyntaxNode getParent() {
         return parent;

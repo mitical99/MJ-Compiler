@@ -5,24 +5,13 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FuncCall extends DesignatorStatement {
+public class ActualParameters extends ActPars {
 
-    private FunctionName FunctionName;
     private ActParams ActParams;
 
-    public FuncCall (FunctionName FunctionName, ActParams ActParams) {
-        this.FunctionName=FunctionName;
-        if(FunctionName!=null) FunctionName.setParent(this);
+    public ActualParameters (ActParams ActParams) {
         this.ActParams=ActParams;
         if(ActParams!=null) ActParams.setParent(this);
-    }
-
-    public FunctionName getFunctionName() {
-        return FunctionName;
-    }
-
-    public void setFunctionName(FunctionName FunctionName) {
-        this.FunctionName=FunctionName;
     }
 
     public ActParams getActParams() {
@@ -38,18 +27,15 @@ public class FuncCall extends DesignatorStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(FunctionName!=null) FunctionName.accept(visitor);
         if(ActParams!=null) ActParams.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(FunctionName!=null) FunctionName.traverseTopDown(visitor);
         if(ActParams!=null) ActParams.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(FunctionName!=null) FunctionName.traverseBottomUp(visitor);
         if(ActParams!=null) ActParams.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -57,13 +43,7 @@ public class FuncCall extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FuncCall(\n");
-
-        if(FunctionName!=null)
-            buffer.append(FunctionName.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
+        buffer.append("ActualParameters(\n");
 
         if(ActParams!=null)
             buffer.append(ActParams.toString("  "+tab));
@@ -72,7 +52,7 @@ public class FuncCall extends DesignatorStatement {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FuncCall]");
+        buffer.append(") [ActualParameters]");
         return buffer.toString();
     }
 }

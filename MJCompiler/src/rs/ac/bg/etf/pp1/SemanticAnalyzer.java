@@ -4,24 +4,30 @@ import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.symboltable.*;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import org.apache.log4j.Logger;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
 	
-	int printCallCount = 0;
-	int varDeclCount = 0;
-	int formParamCount = 0;
-	Struct currLineType = null;
-	Struct currRecord = null;
-	Obj currMethod = null;
-	String addOp = null;
-	String mulOp = null;
-	String relOp = null;
-	boolean isRecordField = false;
+	private int printCallCount = 0;
+	private int varDeclCount = 0;
+	private int formParamCount = 0;
+	private Stack<List<Struct>> actualArgFunctionStack = new Stack<List<Struct>>();
+	private Struct currLineType = null;
+	private Struct currRecord = null;
+	private Obj currMethod = null;
+	private String addOp = null;
+	private String mulOp = null;
+	private String relOp = null;
+	private boolean isRecordField = false;
 	public static final Struct boolType = new Struct(Struct.Bool);
-	boolean returnFound = false;
-	boolean errorDetected = false;
-	int nVars;
+	private boolean returnFound = false;
+	private boolean errorDetected = false;
+	private int nVars;
 	
 	public SemanticAnalyzer() {
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
@@ -229,6 +235,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.closeScope();
 	}
 	
+	public void visit(FirstParam param) {
+		actualArgFunctionStack.peek().add(param.getExpr().struct);
+	}
+	
+	public void visit(MoreParameters param) {
+		actualArgFunctionStack.peek().add(param.getExpr().struct);
+	}
+	
 	public void visit(FactorNumberConstant factor) {
 		factor.struct = Tab.intType;
 	}
@@ -241,9 +255,69 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		factor.struct = boolType;
 	}
 	
-//	public void visit(FactorNewObjectNoExpr factor) {
-//		factor.struct = currLineType;
-//	}
+	public void visit(FunctionNameDesignator funcCall) {
+		funcCall.obj = funcCall.getDesignator().obj;
+		
+		actualArgFunctionStack.push(new ArrayList<Struct>());
+	}
+	
+	public void visit(IncStmt incStmt) {
+		Obj node = incStmt.getDesignator().obj;
+	}
+	
+	public void visit(DecStmt decStmt) {
+		
+	}
+	
+	private boolean checkFunctionCall(String functionName, SyntaxNode info) {
+		Obj function = Tab.find(functionName);
+		if(function == Tab.noObj) {
+			report_error("Called function " + functionName + " not declared yet!", info);
+			return false;
+		}
+		//check if used typename is function
+		if(function.getKind() != Obj.Meth) {
+			report_error("Used variable " + functionName + " isn't a function!", info);
+			return false;
+		}
+		//check number of arguments
+		List<Obj> formalArgList = (List<Obj>) function.getLocalSymbols();
+		List<Struct> actualArgList = actualArgFunctionStack.pop();
+		if(actualArgList.size() != function.getLevel()) {
+			report_error("Number of formal and actuals arguments doesn't match!", info);
+			return false;
+		}
+		//check compatibility
+		for(int i = 0; i < function.getLevel(); i++) {
+			if(!actualArgList.get(i).compatibleWith(formalArgList.get(i).getType())) {
+				report_error("Error in " +  i + 1 + " argument: Not compatible types!", info);
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void visit(FactorDesignatorWithAct functionCall) {
+		String functionName = functionCall. getFunctionName().obj.getName();
+		Obj function = Tab.find(functionName);
+		if(!checkFunctionCall(functionName, functionCall)) {
+			return;
+		}
+		functionCall.struct = function.getType();
+	}
+	
+	public void visit(FuncCall designatorFuncCall) {
+		String functionName = designatorFuncCall.getFunctionName().obj.getName();
+		Obj function = Tab.find(functionName);
+		if(!checkFunctionCall(functionName, designatorFuncCall)) {
+			return;
+		}
+		
+	}
+	
+	public void visit(FactorDesignatorOnly factor) {
+		factor.struct = factor.getDesignator().obj.getType();
+	}
 	
 	public void visit(DesignatorOnly designator) {
 		String name = designator.getName();
@@ -273,7 +347,31 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(StructFieldDesignator structDesignator) {
-		//TO-DO
+		String name = structDesignator.getDesignator().obj.getName();
+		String selectedField = structDesignator.getField();
+		Obj recordObj = structDesignator.getDesignator().obj; 
+		if(recordObj == Tab.noObj) {
+			report_error("Typename " + name + " isn't in symbol table!", structDesignator);
+			structDesignator.obj = Tab.noObj;
+			return;
+		}
+		if(recordObj.getType().getKind() != Struct.Class) {
+			report_error("Typename " + name + " is not record type!", structDesignator);
+			structDesignator.obj = Tab.noObj;
+			return;
+		}
+		
+		ArrayList<Obj> fields = (ArrayList<Obj>) recordObj.getType().getMembers();
+		
+		for(Obj field : fields) {
+			if(selectedField.equals(field.getName())) {
+				structDesignator.obj = field;
+				return;
+			}
+		}
+		
+		report_error("Struct doesn't contain field with name " + selectedField, structDesignator);
+		
 	}
 	
 	public void visit(DoubleEqual op) {

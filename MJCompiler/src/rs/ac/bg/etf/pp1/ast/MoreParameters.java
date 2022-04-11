@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:21
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ExpressionList extends ExprList {
+public class MoreParameters extends ActParams {
 
-    private ExprList ExprList;
+    private ActParams ActParams;
     private Expr Expr;
 
-    public ExpressionList (ExprList ExprList, Expr Expr) {
-        this.ExprList=ExprList;
-        if(ExprList!=null) ExprList.setParent(this);
+    public MoreParameters (ActParams ActParams, Expr Expr) {
+        this.ActParams=ActParams;
+        if(ActParams!=null) ActParams.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
 
-    public ExprList getExprList() {
-        return ExprList;
+    public ActParams getActParams() {
+        return ActParams;
     }
 
-    public void setExprList(ExprList ExprList) {
-        this.ExprList=ExprList;
+    public void setActParams(ActParams ActParams) {
+        this.ActParams=ActParams;
     }
 
     public Expr getExpr() {
@@ -38,18 +38,18 @@ public class ExpressionList extends ExprList {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(ExprList!=null) ExprList.accept(visitor);
+        if(ActParams!=null) ActParams.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(ExprList!=null) ExprList.traverseTopDown(visitor);
+        if(ActParams!=null) ActParams.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(ExprList!=null) ExprList.traverseBottomUp(visitor);
+        if(ActParams!=null) ActParams.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -57,10 +57,10 @@ public class ExpressionList extends ExprList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ExpressionList(\n");
+        buffer.append("MoreParameters(\n");
 
-        if(ExprList!=null)
-            buffer.append(ExprList.toString("  "+tab));
+        if(ActParams!=null)
+            buffer.append(ActParams.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
@@ -72,7 +72,7 @@ public class ExpressionList extends ExprList {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ExpressionList]");
+        buffer.append(") [MoreParameters]");
         return buffer.toString();
     }
 }

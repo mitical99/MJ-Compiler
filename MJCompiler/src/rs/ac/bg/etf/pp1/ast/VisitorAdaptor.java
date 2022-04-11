@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:22
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -32,14 +32,15 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(VarDeclLine VarDeclLine) { }
     public void visit(InsideClassDeclList InsideClassDeclList) { }
     public void visit(Statements Statements) { }
+    public void visit(FunctionName FunctionName) { }
     public void visit(FormParams FormParams) { }
     public void visit(OneFormParam OneFormParam) { }
     public void visit(Label Label) { }
     public void visit(ClassDeclLine ClassDeclLine) { }
-    public void visit(ExprList ExprList) { }
     public void visit(VarDeclList VarDeclList) { }
     public void visit(Expr Expr) { }
     public void visit(ConditionTermList ConditionTermList) { }
+    public void visit(ActPars ActPars) { }
     public void visit(MethodTypeName MethodTypeName) { }
     public void visit(DesignatorStatement DesignatorStatement) { }
     public void visit(DesignatorField DesignatorField) { }
@@ -75,7 +76,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FactorBoolConstant FactorBoolConstant) { visit(); }
     public void visit(FactorCharConstant FactorCharConstant) { visit(); }
     public void visit(FactorNumberConstant FactorNumberConstant) { visit(); }
-    public void visit(FactorDesignatorParenOnly FactorDesignatorParenOnly) { visit(); }
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct) { visit(); }
     public void visit(FactorDesignatorOnly FactorDesignatorOnly) { visit(); }
     public void visit(NoFactorList NoFactorList) { visit(); }
@@ -90,15 +90,17 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NoMoreAndConditions NoMoreAndConditions) { visit(); }
     public void visit(AndConditions AndConditions) { visit(); }
     public void visit(ConditionTerms ConditionTerms) { visit(); }
-    public void visit(NoExprList NoExprList) { visit(); }
-    public void visit(ExpressionList ExpressionList) { visit(); }
-    public void visit(ActParameters ActParameters) { visit(); }
+    public void visit(FirstParam FirstParam) { visit(); }
+    public void visit(MoreParameters MoreParameters) { visit(); }
+    public void visit(NoParameters NoParameters) { visit(); }
+    public void visit(ActualParameters ActualParameters) { visit(); }
     public void visit(NoMoreOrConditions NoMoreOrConditions) { visit(); }
     public void visit(OrConditions OrConditions) { visit(); }
     public void visit(ErrorCondition ErrorCondition) { visit(); }
     public void visit(Conditions Conditions) { visit(); }
     public void visit(ErrorAssign ErrorAssign) { visit(); }
     public void visit(ExprStatement ExprStatement) { visit(); }
+    public void visit(FunctionNameDesignator FunctionNameDesignator) { visit(); }
     public void visit(DecStmt DecStmt) { visit(); }
     public void visit(IncStmt IncStmt) { visit(); }
     public void visit(FuncCall FuncCall) { visit(); }

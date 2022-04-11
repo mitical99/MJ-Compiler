@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:22
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -32,14 +32,15 @@ public interface Visitor {
     public void visit(VarDeclLine VarDeclLine);
     public void visit(InsideClassDeclList InsideClassDeclList);
     public void visit(Statements Statements);
+    public void visit(FunctionName FunctionName);
     public void visit(FormParams FormParams);
     public void visit(OneFormParam OneFormParam);
     public void visit(Label Label);
     public void visit(ClassDeclLine ClassDeclLine);
-    public void visit(ExprList ExprList);
     public void visit(VarDeclList VarDeclList);
     public void visit(Expr Expr);
     public void visit(ConditionTermList ConditionTermList);
+    public void visit(ActPars ActPars);
     public void visit(MethodTypeName MethodTypeName);
     public void visit(DesignatorStatement DesignatorStatement);
     public void visit(DesignatorField DesignatorField);
@@ -75,7 +76,6 @@ public interface Visitor {
     public void visit(FactorBoolConstant FactorBoolConstant);
     public void visit(FactorCharConstant FactorCharConstant);
     public void visit(FactorNumberConstant FactorNumberConstant);
-    public void visit(FactorDesignatorParenOnly FactorDesignatorParenOnly);
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct);
     public void visit(FactorDesignatorOnly FactorDesignatorOnly);
     public void visit(NoFactorList NoFactorList);
@@ -90,15 +90,17 @@ public interface Visitor {
     public void visit(NoMoreAndConditions NoMoreAndConditions);
     public void visit(AndConditions AndConditions);
     public void visit(ConditionTerms ConditionTerms);
-    public void visit(NoExprList NoExprList);
-    public void visit(ExpressionList ExpressionList);
-    public void visit(ActParameters ActParameters);
+    public void visit(FirstParam FirstParam);
+    public void visit(MoreParameters MoreParameters);
+    public void visit(NoParameters NoParameters);
+    public void visit(ActualParameters ActualParameters);
     public void visit(NoMoreOrConditions NoMoreOrConditions);
     public void visit(OrConditions OrConditions);
     public void visit(ErrorCondition ErrorCondition);
     public void visit(Conditions Conditions);
     public void visit(ErrorAssign ErrorAssign);
     public void visit(ExprStatement ExprStatement);
+    public void visit(FunctionNameDesignator FunctionNameDesignator);
     public void visit(DecStmt DecStmt);
     public void visit(IncStmt IncStmt);
     public void visit(FuncCall FuncCall);

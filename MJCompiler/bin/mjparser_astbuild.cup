@@ -79,7 +79,6 @@ nonterminal SingleStatement SingleStatement;
 nonterminal Label Label;
 nonterminal Statements Statements;
 nonterminal Assignop Assignop;
-nonterminal ExprList ExprList;
 nonterminal Matched Matched;
 nonterminal Unmatched Unmatched;
 nonterminal ConditionTermList ConditionTermList;
@@ -98,6 +97,8 @@ nonterminal DesignatorFieldList DesignatorFieldList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
+nonterminal ActPars ActPars;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, P1, M2); RESULT.setLine(pleft); :};
 
@@ -256,12 +257,14 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new
 
 DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 AssignOrErrorStatement:A2 {: RESULT=new AssignStmt(dest, A1, A2); RESULT.setLine(destleft); :}
 					|
-					(FuncCall) Designator:D1 LPAREN ActParams:A2 RPAREN SEMI {: RESULT=new FuncCall(D1, A2); RESULT.setLine(D1left); :}
+					(FuncCall) FunctionName:F1 LPAREN ActParams:A2 RPAREN SEMI {: RESULT=new FuncCall(F1, A2); RESULT.setLine(F1left); :}
 					|
 					(IncStmt) Designator:D1 INC SEMI {: RESULT=new IncStmt(D1); RESULT.setLine(D1left); :}
 					|
 					(DecStmt) Designator:D1 DEC SEMI {: RESULT=new DecStmt(D1); RESULT.setLine(D1left); :}		
-					;	
+					;
+
+FunctionName ::= (FunctionNameDesignator) Designator:funcName {: RESULT=new FunctionNameDesignator(funcName); RESULT.setLine(funcNameleft); :};
 
 AssignOrErrorStatement ::= (ExprStatement) Expr:E1 SEMI {: RESULT=new ExprStatement(E1); RESULT.setLine(E1left); :}
 						|
@@ -280,11 +283,14 @@ ConditionTermList ::= (OrConditions) ConditionTermList:C1 OR ConditionTerm:C2 {:
 					(NoMoreOrConditions) {: RESULT=new NoMoreOrConditions(); :} /* epsilon */
 					;
 
-ActParams ::= (ActParameters) Expr:E1 ExprList:E2 {: RESULT=new ActParameters(E1, E2); RESULT.setLine(E1left); :};
+ActPars ::= (ActualParameters) ActParams:A1 {: RESULT=new ActualParameters(A1); RESULT.setLine(A1left); :}
+		|
+		(NoParameters) {: RESULT=new NoParameters(); :} /* epsilon */
+		;
 
-ExprList ::= (ExpressionList) ExprList:E1 COMMA Expr:E2 {: RESULT=new ExpressionList(E1, E2); RESULT.setLine(E1left); :}
+ActParams ::= (MoreParameters) ActParams:A1 COMMA Expr:e {: RESULT=new MoreParameters(A1, e); RESULT.setLine(A1left); :}
 			|
-			(NoExprList) {: RESULT=new NoExprList(); :} /* epsilon */
+			(FirstParam) Expr:e {: RESULT=new FirstParam(e); RESULT.setLine(eleft); :}
 			;
 
 ConditionTerm ::= (ConditionTerms) CondFact:C1 CondFactList:C2 {: RESULT=new ConditionTerms(C1, C2); RESULT.setLine(C1left); :};
@@ -320,9 +326,7 @@ MulFactorList ::= (FactorList) MulFactorList:M1 Mulop:M2 Factor:F3 {: RESULT=new
 	
 Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnly(d); RESULT.setLine(dleft); :}
 		|
-		(FactorDesignatorWithAct) Designator:func LPAREN ActParams:A1 RPAREN {: RESULT=new FactorDesignatorWithAct(func, A1); RESULT.setLine(funcleft); :}
-		|
-		(FactorDesignatorParenOnly) Designator:D1 LPAREN RPAREN {: RESULT=new FactorDesignatorParenOnly(D1); RESULT.setLine(D1left); :}
+		(FactorDesignatorWithAct) FunctionName:F1 LPAREN ActPars:A2 RPAREN {: RESULT=new FactorDesignatorWithAct(F1, A2); RESULT.setLine(F1left); :}
 		|
 		(FactorNumberConstant) NUMBER:N1 {: RESULT=new FactorNumberConstant(N1); RESULT.setLine(N1left); :}
 		|

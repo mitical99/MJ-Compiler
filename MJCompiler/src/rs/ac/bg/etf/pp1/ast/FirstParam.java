@@ -1,20 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/3/2022 22:16:21
+// 11/3/2022 21:18:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ActParameters extends ActParams {
+public class FirstParam extends ActParams {
 
     private Expr Expr;
-    private ExprList ExprList;
 
-    public ActParameters (Expr Expr, ExprList ExprList) {
+    public FirstParam (Expr Expr) {
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
-        this.ExprList=ExprList;
-        if(ExprList!=null) ExprList.setParent(this);
     }
 
     public Expr getExpr() {
@@ -25,39 +22,28 @@ public class ActParameters extends ActParams {
         this.Expr=Expr;
     }
 
-    public ExprList getExprList() {
-        return ExprList;
-    }
-
-    public void setExprList(ExprList ExprList) {
-        this.ExprList=ExprList;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(Expr!=null) Expr.accept(visitor);
-        if(ExprList!=null) ExprList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
-        if(ExprList!=null) ExprList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Expr!=null) Expr.traverseBottomUp(visitor);
-        if(ExprList!=null) ExprList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ActParameters(\n");
+        buffer.append("FirstParam(\n");
 
         if(Expr!=null)
             buffer.append(Expr.toString("  "+tab));
@@ -65,14 +51,8 @@ public class ActParameters extends ActParams {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ExprList!=null)
-            buffer.append(ExprList.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [ActParameters]");
+        buffer.append(") [FirstParam]");
         return buffer.toString();
     }
 }
