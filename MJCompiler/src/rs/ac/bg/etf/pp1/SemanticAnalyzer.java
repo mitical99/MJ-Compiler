@@ -261,12 +261,35 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		actualArgFunctionStack.push(new ArrayList<Struct>());
 	}
 	
+	private boolean checkRightValueType(Obj node, SyntaxNode info) {
+		int kind = node.getKind();
+		if(kind != Obj.Var && kind != Obj.Elem && kind != Obj.Fld) {
+			report_error("Wrong right value type in operation!", info);
+			return false;
+		}
+		return true;
+	}
+	
 	public void visit(IncStmt incStmt) {
 		Obj node = incStmt.getDesignator().obj;
+		if(!checkRightValueType(node, incStmt)) {
+			return;
+		}
+		
+		if(node.getType()!= Tab.intType) {
+			report_error("Increment can be done only on integer type variables!", incStmt);
+		}
 	}
 	
 	public void visit(DecStmt decStmt) {
+		Obj node = decStmt.getDesignator().obj;
+		if(!checkRightValueType(node, decStmt)) {
+			return;
+		}
 		
+		if(node.getType()!= Tab.intType) {
+			report_error("Increment can be done only on integer type variables!", decStmt);
+		}
 	}
 	
 	private boolean checkFunctionCall(String functionName, SyntaxNode info) {
