@@ -24,6 +24,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private String mulOp = null;
 	private String relOp = null;
 	private boolean isRecordField = false;
+	private boolean mainFound = false;
 	public static final Struct boolType = new Struct(Struct.Bool);
 	private boolean returnFound = false;
 	private boolean errorDetected = false;
@@ -227,9 +228,19 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(MethodDeclaration method) {
+		
+		if(!returnFound && currMethod.getType() != Tab.noType) {
+			report_error("Function doesn't have correct return value!", method);
+			return;
+		}
 		currMethod.setLevel(formParamCount);
 		
+		if(currMethod.getName().equals("main") && currMethod.getLevel() == 0) {
+			mainFound = true;
+		}
+		
 		Tab.chainLocalSymbols(currMethod);
+		returnFound = false;
 		currMethod = null;
 		formParamCount = 0;
 		Tab.closeScope();
@@ -261,6 +272,28 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		actualArgFunctionStack.push(new ArrayList<Struct>());
 	}
 	
+	//PRINT PROCESSING
+	
+	private boolean checkPrintStmt(Struct exprStruct, SyntaxNode info) {
+		if(exprStruct != Tab.intType && exprStruct != Tab.charType && exprStruct != SemanticAnalyzer.boolType) {
+			report_error("Variable in print statement isn't base type!", info);
+			return false;
+		}
+		return true;
+	}
+	
+	public void visit(PrintStmtNoNumConst printStmt) {
+		Struct expr = printStmt.getExpr().struct;
+		checkPrintStmt(expr, printStmt);
+	}
+	
+	public void visit(PrintStmtNumConst printStmt) {
+		Struct expr = printStmt.getExpr().struct;
+		checkPrintStmt(expr, printStmt);
+	}
+	
+	//READ PROCESSING
+	
 	//ASSIGN STATEMENT PROCESSING
 	
 	public void visit(AssignStmt assignStmt) {
@@ -274,6 +307,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Incompatible types in assigment to a variable " + leftOperator.getName(), assignStmt);
 		}
 	}
+	
 	
 	private boolean checkRightValueType(Obj node, SyntaxNode info) {
 		if(node == Tab.noObj)
