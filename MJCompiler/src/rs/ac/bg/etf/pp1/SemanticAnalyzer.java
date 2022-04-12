@@ -6,7 +6,9 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
@@ -17,6 +19,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private int formParamCount = 0;
 	private int doWhileCounter = 0;
 	private Stack<List<Struct>> actualArgFunctionStack = new Stack<List<Struct>>();
+	private Map<String, Struct> userDefinedRecords = new HashMap<String, Struct>();
 	private Struct currLineType = null;
 	private Struct currRecord = null;
 	private Obj currMethod = null;
@@ -81,15 +84,15 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currLineType = type.struct;
 	}
 	
-	private boolean checkForConstDeclErrors(String constName, Struct constType) {
+	private boolean checkForConstDeclErrors(String constName, Struct constType, SyntaxNode info) {
 		if(Tab.find(constName) != Tab.noObj) { //present in table already
 			if(Tab.currentScope.findSymbol(constName) != null) { //present in table and in the same scope
-			report_error("Constant with name" + constName + "already exists in symbol table", null);
+			report_error("Constant with name" + constName + "already exists in symbol table", info);
 			return true;
 			}
 		}
 		if(!currLineType.equals(constType)) { //Error in type constant and assigned value
-			report_error("Incompatible types of assigned value and declared constant type!", null);
+			report_error("Incompatible types of assigned value and declared constant type!", info);
 			return true;
 		}
 		return false;
@@ -99,7 +102,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstNumberDeclaration numConst) {
 		String constName = numConst.getConstName();
 		Integer constValue = numConst.getNumConstValue();
-		if(this.checkForConstDeclErrors(constName, Tab.intType))
+		if(this.checkForConstDeclErrors(constName, Tab.intType, numConst))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, Tab.intType);
 		constNode.setAdr(constValue);
@@ -108,7 +111,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstCharDeclaration charConst) {
 		String constName = charConst.getConstName();
 		Character constValue = charConst.getCharConstValue();
-		if(this.checkForConstDeclErrors(constName, Tab.charType))
+		if(this.checkForConstDeclErrors(constName, Tab.charType, charConst))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, Tab.charType);
 		constNode.setAdr(constValue);
@@ -117,7 +120,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ConstBoolDeclaration boolConst) {
 		String constName = boolConst.getConstName();
 		Boolean constValue = boolConst.getBoolConstValue();
-		if(this.checkForConstDeclErrors(constName, boolType))
+		if(this.checkForConstDeclErrors(constName, boolType, boolConst))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, boolType);
 		if(constValue)
@@ -127,10 +130,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	
-	private boolean checkForVarDeclErrors(String varName) {
+	private boolean checkForVarDeclErrors(String varName, SyntaxNode info) {
 		if(Tab.find(varName) != Tab.noObj) {
 			if(Tab.currentScope.findSymbol(varName) != null) {
-			report_error("Variable with name" + varName + "already exists in symbol table", null);
+			report_error("Variable with name" + varName + "already exists in symbol table", info);
 			return true;
 			}
 		}
@@ -139,14 +142,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(Var var) {
 		String varName = var.getVarName();
-		if(this.checkForVarDeclErrors(varName)) 
+		if(this.checkForVarDeclErrors(varName, var)) 
 			return;
 		Obj varNode = Tab.insert(Obj.Var, varName, currLineType);
 	}
 	
 	public void visit(ArrayVar arrayVar) {
 		String varName = arrayVar.getVarName();
-		if(this.checkForVarDeclErrors(varName)) 
+		if(this.checkForVarDeclErrors(varName, arrayVar)) 
 			return;
 		Struct varType = new Struct(Struct.Array, currLineType);
 		Obj varNode = null;
@@ -156,9 +159,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			varNode = Tab.insert(Obj.Var, varName, varType);
 	}
 	
-	private boolean checkForRecordDeclErrors(String recordName) {
+	private boolean checkForRecordDeclErrors(String recordName, SyntaxNode info) {
 		if(Tab.find(recordName) != Tab.noObj) {
-			report_error("Record name" + recordName + "already declared", null);
+			report_error("Record name" + recordName + "already declared", info);
 			return true;
 		}
 		return false;
@@ -166,7 +169,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(RecordName recordName) {
 		String recName = recordName.getRecordName();
-		if(this.checkForRecordDeclErrors(recName))
+		if(this.checkForRecordDeclErrors(recName, recordName))
 			return;
 		
 		isRecordField = true;
@@ -177,11 +180,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(RecordDeclaration recordDecl) {
+		userDefinedRecords.put(recordDecl.getRecordName().getRecordName(), currRecord);
 		Tab.chainLocalSymbols(currRecord);
 		Tab.closeScope();
 		currRecord = null;
 		isRecordField = false;
 	}
+	
+	//METHOD PROCESSING
 	
 	private boolean insertMethodInSymTable(String methodName, Struct retType) {
 		if(Tab.find(methodName) != Tab.noObj) {
@@ -208,9 +214,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 	}
 	
+	//PARAMETERS IN FUNCTION PROCESSING
+	
 	public void visit(OneElemParam singleParam) {
 		String paramName = singleParam.getParamName();
-		if(this.checkForVarDeclErrors(paramName)) {
+		if(this.checkForVarDeclErrors(paramName, singleParam)) {
 			return;
 		}
 		Obj paramNode = Tab.insert(Obj.Var, paramName, currLineType);
@@ -219,7 +227,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(ArrayParam arrayParam) {
 		String paramName = arrayParam.getParamName();
-		if(this.checkForVarDeclErrors(paramName)) {
+		if(this.checkForVarDeclErrors(paramName, arrayParam)) {
 			return;
 		}
 		Struct varType = new Struct(Struct.Array, currLineType);
@@ -254,6 +262,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		actualArgFunctionStack.peek().add(param.getExpr().struct);
 	}
 	
+	//FACTOR PROCESSING
+	
 	public void visit(FactorNumberConstant factor) {
 		factor.struct = Tab.intType;
 	}
@@ -270,6 +280,25 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		funcCall.obj = funcCall.getDesignator().obj;
 		
 		actualArgFunctionStack.push(new ArrayList<Struct>());
+	}
+	
+	public void visit(FactorNewObjectNoExpr newFactor) {
+		String newType = newFactor.getType().getTypeName();
+		if(!userDefinedRecords.containsKey(newType)) {
+			report_error("New operator can be used only on user defined records!", newFactor);
+			newFactor.struct = Tab.noType;
+		}
+		newFactor.struct = userDefinedRecords.get(newType);
+	}
+	
+	public void visit(FactorNewObjectExpr newArray) {
+		Struct expr = newArray.getExpr().struct;
+		if(expr != Tab.intType) {
+			report_error("Size of an array must be int type!", newArray);
+			newArray.struct = Tab.noType;
+		}
+		
+		newArray.struct = new Struct(Struct.Array, newArray.getType().struct);
 	}
 	
 	//PRINT PROCESSING
@@ -593,7 +622,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		report_error("Struct doesn't contain field with name " + selectedField, structDesignator);
 		
 	}
-	
+	//OPERATORS PROCESSING
 	public void visit(DoubleEqual op) {
 		relOp = "==";
 	}
