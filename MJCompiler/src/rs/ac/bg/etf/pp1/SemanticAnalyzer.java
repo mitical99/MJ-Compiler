@@ -301,6 +301,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		newArray.struct = new Struct(Struct.Array, newArray.getType().struct);
 	}
 	
+	public void visit(FactorExprOnly bracketExpr) {
+		bracketExpr.struct = bracketExpr.getExpr().struct;
+	}
+	
 	//PRINT PROCESSING
 	
 	private boolean checkPrintStmt(Struct exprStruct, SyntaxNode info) {
