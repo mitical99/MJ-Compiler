@@ -294,6 +294,18 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	//READ PROCESSING
 	
+	public void visit(ReadStmt readStmt) {
+		Obj designator = readStmt.getDesignator().obj;
+		if(!checkRightValueType(designator, readStmt)) {
+			return;
+		}
+		Struct designatorType = designator.getType();
+		if(designatorType != Tab.intType && designatorType != Tab.charType 
+				&& designatorType != SemanticAnalyzer.boolType) {
+			report_error("Variable type in read statement must be int, char or bool type!", readStmt);
+		}
+	}
+	
 	//ASSIGN STATEMENT PROCESSING
 	
 	public void visit(AssignStmt assignStmt) {
