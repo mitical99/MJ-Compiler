@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Moduo extends Mulop {
+public class DoWhileCounter extends DoWhileDepthCounterHelper {
 
-    public Moduo () {
+    public DoWhileCounter () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class Moduo extends Mulop {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Moduo(\n");
+        buffer.append("DoWhileCounter(\n");
 
         buffer.append(tab);
-        buffer.append(") [Moduo]");
+        buffer.append(") [DoWhileCounter]");
         return buffer.toString();
     }
 }

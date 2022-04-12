@@ -68,7 +68,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeNam
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
-nonterminal ActPars;
+nonterminal ActPars, DoWhileDepthCounterHelper;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
@@ -223,8 +223,10 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				|
 				(IfStmt) IF LPAREN Condition RPAREN Matched ELSE Matched
 				|
-				(DoStmt) DO Statement WHILE LPAREN Condition RPAREN SEMI
+				(DoStmt) DO DoWhileDepthCounterHelper Statement WHILE LPAREN Condition RPAREN SEMI
 				;
+
+DoWhileDepthCounterHelper ::= (DoWhileCounter) /* epsilon */;
 
 DesignatorStatement ::= (AssignStmt) Designator:dest Assignop Expr SEMI
 					|

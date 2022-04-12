@@ -96,6 +96,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, Var
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars ActPars;
+nonterminal DoWhileDepthCounterHelper DoWhileDepthCounterHelper;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, P1, M2); RESULT.setLine(pleft); :};
@@ -250,8 +251,10 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new
 				|
 				(IfStmt) IF LPAREN Condition:C1 RPAREN Matched:M2 ELSE Matched:M3 {: RESULT=new IfStmt(C1, M2, M3); RESULT.setLine(C1left); :}
 				|
-				(DoStmt) DO Statement:S1 WHILE LPAREN Condition:C2 RPAREN SEMI {: RESULT=new DoStmt(S1, C2); RESULT.setLine(S1left); :}
+				(DoStmt) DO DoWhileDepthCounterHelper:D1 Statement:S2 WHILE LPAREN Condition:C3 RPAREN SEMI {: RESULT=new DoStmt(D1, S2, C3); RESULT.setLine(D1left); :}
 				;
+
+DoWhileDepthCounterHelper ::= (DoWhileCounter) {: RESULT=new DoWhileCounter(); :} /* epsilon */;
 
 DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 Expr:E2 SEMI {: RESULT=new AssignStmt(dest, A1, E2); RESULT.setLine(destleft); :}
 					|

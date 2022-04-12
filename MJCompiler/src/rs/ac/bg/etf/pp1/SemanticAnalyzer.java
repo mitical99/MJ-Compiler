@@ -13,9 +13,9 @@ import org.apache.log4j.Logger;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
 	
-	private int printCallCount = 0;
 	private int varDeclCount = 0;
 	private int formParamCount = 0;
+	private int doWhileCounter = 0;
 	private Stack<List<Struct>> actualArgFunctionStack = new Stack<List<Struct>>();
 	private Struct currLineType = null;
 	private Struct currRecord = null;
@@ -303,6 +303,30 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if(designatorType != Tab.intType && designatorType != Tab.charType 
 				&& designatorType != SemanticAnalyzer.boolType) {
 			report_error("Variable type in read statement must be int, char or bool type!", readStmt);
+		}
+	}
+	
+	//DO-WHILE PROCESSING
+	
+	public void visit(DoWhileCounter doWhile) {
+		doWhileCounter++;
+	}
+	
+	public void visit(DoStmt doWhile) {
+		doWhileCounter--;
+	}
+	
+	//BREAK AND CONTINUE PROCESSING
+	
+	public void visit(BreakStmt breakStmt) {
+		if(doWhileCounter == 0) {
+			report_error("Break statement must be inside do-while loop", breakStmt);
+		}
+	}
+	
+	public void visit(ContinueStmt continueStmt) {
+		if(doWhileCounter == 0) {
+			report_error("Continue statement must be inside do-while loop", continueStmt);
 		}
 	}
 	
