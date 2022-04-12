@@ -261,6 +261,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		actualArgFunctionStack.push(new ArrayList<Struct>());
 	}
 	
+	//ASSIGN STATEMENT PROCESSING
+	
 	public void visit(AssignStmt assignStmt) {
 		Obj leftOperator = assignStmt.getDesignator().obj;
 		Struct rightType = assignStmt.getExpr().struct;
@@ -283,6 +285,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		return true;
 	}
+	//INC AND DEC PROCESSING
 	
 	public void visit(IncStmt incStmt) {
 		Obj node = incStmt.getDesignator().obj;
@@ -364,7 +367,26 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	//FUNCTION RETURN PROCESSING
 	
 	public void visit(ReturnNoExprStmt returnExpr) {
-		
+		if(this.currMethod == null) {
+			report_error("Return statement found outside of function!", returnExpr);
+			return;
+		}
+		if(this.currMethod.getType() != Tab.noType) {
+			report_error("Function must return a value of type " + currMethod.getType(), returnExpr);
+			return;
+		}
+		returnFound = true;
+	}
+	
+	public void visit(ReturnExprStmt returnExpr) {
+		Struct expr = returnExpr.getExpr().struct;
+		if(currMethod == null) {
+			report_error("Return statement found outside of function!", returnExpr);
+			return;
+		}
+		if(currMethod.getType() != expr) {
+			returnFound = true;
+		}
 	}
 	
 	//CONDITIONS PROCESSING
