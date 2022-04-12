@@ -62,13 +62,14 @@ nonterminal ExtendedClass, InsideClassDeclList, FormPars, StatementList, Designa
 nonterminal FormParams, Statement, SingleStatement, Label, Statements;
 nonterminal Assignop, Matched, Unmatched;
 nonterminal ConditionTermList, ConditionTerm, CondFactList, CondFact, ActParams, Condition;
-nonterminal Relop, MulFactorList, Mulop, Addop, DesignatorFieldList;
+nonterminal Relop, Mulop, Addop, DesignatorFieldList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
 
@@ -240,16 +241,13 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop Expr SEMI
 FunctionName ::= (FunctionNameDesignator) Designator:funcName;
 
 
-Condition ::= (Conditions) ConditionTerm ConditionTermList
+Condition ::= (Conditions) Condition OR ConditionTerm
+			|
+			(SingleCondition) ConditionTerm
 			|
 			(ErrorCondition) error :l
 			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :}
 			;
-
-ConditionTermList ::= (OrConditions) ConditionTermList OR ConditionTerm
-					|
-					(NoMoreOrConditions) /* epsilon */
-					;
 
 ActPars ::= (ActualParameters) ActParams
 		|
@@ -261,17 +259,15 @@ ActParams ::= (MoreParameters) ActParams COMMA Expr:e
 			(FirstParam) Expr:e
 			;
 
-ConditionTerm ::= (ConditionTerms) CondFact CondFactList;
-
-
-CondFactList ::= (AndConditions) CondFactList AND CondFact
+ConditionTerm ::= (ConditionTerms) ConditionTerm AND CondFact
 				|
-				(NoMoreAndConditions) /* epsilon */
+				(SingleConditionFact) CondFact
 				;
 
-CondFact ::= (CondFactOneExpr) Expr
+
+CondFact ::= (CondFactOneExpr) Expr:e
 			|
-			(CondFactTwoExpr) Expr Relop Expr
+			(CondFactTwoExpr) Expr:exleft Relop Expr:exright
 			;
 
 

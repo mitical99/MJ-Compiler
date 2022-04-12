@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -18,15 +18,15 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ExtendedClass ExtendedClass) { }
     public void visit(StatementList StatementList) { }
     public void visit(ActParams ActParams) { }
-    public void visit(Addop Addop) { }
     public void visit(ConditionTerm ConditionTerm) { }
+    public void visit(Addop Addop) { }
     public void visit(ConstDeclLine ConstDeclLine) { }
     public void visit(Factor Factor) { }
     public void visit(CondFactList CondFactList) { }
     public void visit(Designator Designator) { }
     public void visit(ProgDecl ProgDecl) { }
-    public void visit(Term Term) { }
     public void visit(MulFactorList MulFactorList) { }
+    public void visit(Term Term) { }
     public void visit(Condition Condition) { }
     public void visit(VarDeclLine VarDeclLine) { }
     public void visit(InsideClassDeclList InsideClassDeclList) { }
@@ -84,16 +84,14 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NegativeExpr NegativeExpr) { visit(); }
     public void visit(CondFactTwoExpr CondFactTwoExpr) { visit(); }
     public void visit(CondFactOneExpr CondFactOneExpr) { visit(); }
-    public void visit(NoMoreAndConditions NoMoreAndConditions) { visit(); }
-    public void visit(AndConditions AndConditions) { visit(); }
+    public void visit(SingleConditionFact SingleConditionFact) { visit(); }
     public void visit(ConditionTerms ConditionTerms) { visit(); }
     public void visit(FirstParam FirstParam) { visit(); }
     public void visit(MoreParameters MoreParameters) { visit(); }
     public void visit(NoParameters NoParameters) { visit(); }
     public void visit(ActualParameters ActualParameters) { visit(); }
-    public void visit(NoMoreOrConditions NoMoreOrConditions) { visit(); }
-    public void visit(OrConditions OrConditions) { visit(); }
     public void visit(ErrorCondition ErrorCondition) { visit(); }
+    public void visit(SingleCondition SingleCondition) { visit(); }
     public void visit(Conditions Conditions) { visit(); }
     public void visit(FunctionNameDesignator FunctionNameDesignator) { visit(); }
     public void visit(DecStmt DecStmt) { visit(); }

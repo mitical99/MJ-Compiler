@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -10,6 +10,8 @@ public abstract class MulFactorList implements SyntaxNode {
     private SyntaxNode parent;
 
     private int line;
+
+    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
 
     public SyntaxNode getParent() {
         return parent;

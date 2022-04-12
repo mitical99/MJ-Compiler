@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -18,15 +18,15 @@ public interface Visitor {
     public void visit(ExtendedClass ExtendedClass);
     public void visit(StatementList StatementList);
     public void visit(ActParams ActParams);
-    public void visit(Addop Addop);
     public void visit(ConditionTerm ConditionTerm);
+    public void visit(Addop Addop);
     public void visit(ConstDeclLine ConstDeclLine);
     public void visit(Factor Factor);
     public void visit(CondFactList CondFactList);
     public void visit(Designator Designator);
     public void visit(ProgDecl ProgDecl);
-    public void visit(Term Term);
     public void visit(MulFactorList MulFactorList);
+    public void visit(Term Term);
     public void visit(Condition Condition);
     public void visit(VarDeclLine VarDeclLine);
     public void visit(InsideClassDeclList InsideClassDeclList);
@@ -84,16 +84,14 @@ public interface Visitor {
     public void visit(NegativeExpr NegativeExpr);
     public void visit(CondFactTwoExpr CondFactTwoExpr);
     public void visit(CondFactOneExpr CondFactOneExpr);
-    public void visit(NoMoreAndConditions NoMoreAndConditions);
-    public void visit(AndConditions AndConditions);
+    public void visit(SingleConditionFact SingleConditionFact);
     public void visit(ConditionTerms ConditionTerms);
     public void visit(FirstParam FirstParam);
     public void visit(MoreParameters MoreParameters);
     public void visit(NoParameters NoParameters);
     public void visit(ActualParameters ActualParameters);
-    public void visit(NoMoreOrConditions NoMoreOrConditions);
-    public void visit(OrConditions OrConditions);
     public void visit(ErrorCondition ErrorCondition);
+    public void visit(SingleCondition SingleCondition);
     public void visit(Conditions Conditions);
     public void visit(FunctionNameDesignator FunctionNameDesignator);
     public void visit(DecStmt DecStmt);

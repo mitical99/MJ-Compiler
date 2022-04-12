@@ -87,7 +87,6 @@ nonterminal CondFact CondFact;
 nonterminal ActParams ActParams;
 nonterminal Condition Condition;
 nonterminal Relop Relop;
-nonterminal MulFactorList MulFactorList;
 nonterminal Mulop Mulop;
 nonterminal Addop Addop;
 nonterminal DesignatorFieldList DesignatorFieldList;
@@ -97,6 +96,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, Var
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars ActPars;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, P1, M2); RESULT.setLine(pleft); :};
 
@@ -268,16 +268,13 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 Expr:E2 SEMI {:
 FunctionName ::= (FunctionNameDesignator) Designator:funcName {: RESULT=new FunctionNameDesignator(funcName); RESULT.setLine(funcNameleft); :};
 
 
-Condition ::= (Conditions) ConditionTerm:C1 ConditionTermList:C2 {: RESULT=new Conditions(C1, C2); RESULT.setLine(C1left); :}
+Condition ::= (Conditions) Condition:C1 OR ConditionTerm:C2 {: RESULT=new Conditions(C1, C2); RESULT.setLine(C1left); :}
+			|
+			(SingleCondition) ConditionTerm:C1 {: RESULT=new SingleCondition(C1); RESULT.setLine(C1left); :}
 			|
 			(ErrorCondition) error :l
 			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :} {: RESULT=new ErrorCondition(); :}
 			;
-
-ConditionTermList ::= (OrConditions) ConditionTermList:C1 OR ConditionTerm:C2 {: RESULT=new OrConditions(C1, C2); RESULT.setLine(C1left); :}
-					|
-					(NoMoreOrConditions) {: RESULT=new NoMoreOrConditions(); :} /* epsilon */
-					;
 
 ActPars ::= (ActualParameters) ActParams:A1 {: RESULT=new ActualParameters(A1); RESULT.setLine(A1left); :}
 		|
@@ -289,17 +286,15 @@ ActParams ::= (MoreParameters) ActParams:A1 COMMA Expr:e {: RESULT=new MoreParam
 			(FirstParam) Expr:e {: RESULT=new FirstParam(e); RESULT.setLine(eleft); :}
 			;
 
-ConditionTerm ::= (ConditionTerms) CondFact:C1 CondFactList:C2 {: RESULT=new ConditionTerms(C1, C2); RESULT.setLine(C1left); :};
-
-
-CondFactList ::= (AndConditions) CondFactList:C1 AND CondFact:C2 {: RESULT=new AndConditions(C1, C2); RESULT.setLine(C1left); :}
+ConditionTerm ::= (ConditionTerms) ConditionTerm:C1 AND CondFact:C2 {: RESULT=new ConditionTerms(C1, C2); RESULT.setLine(C1left); :}
 				|
-				(NoMoreAndConditions) {: RESULT=new NoMoreAndConditions(); :} /* epsilon */
+				(SingleConditionFact) CondFact:C1 {: RESULT=new SingleConditionFact(C1); RESULT.setLine(C1left); :}
 				;
 
-CondFact ::= (CondFactOneExpr) Expr:E1 {: RESULT=new CondFactOneExpr(E1); RESULT.setLine(E1left); :}
+
+CondFact ::= (CondFactOneExpr) Expr:e {: RESULT=new CondFactOneExpr(e); RESULT.setLine(eleft); :}
 			|
-			(CondFactTwoExpr) Expr:E1 Relop:R2 Expr:E3 {: RESULT=new CondFactTwoExpr(E1, R2, E3); RESULT.setLine(E1left); :}
+			(CondFactTwoExpr) Expr:exleft Relop:R1 Expr:exright {: RESULT=new CondFactTwoExpr(exleft, R1, exright); RESULT.setLine(exleftleft); :}
 			;
 
 

@@ -327,12 +327,71 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			exprList.struct = Tab.noType;
 			return;
 		}
-		if(!exprStruct.compatibleWith(termStruct)) {
-			report_error("Term types aren't compatible!", exprList);
-			exprList.struct = Tab.noType;
+//		if(!exprStruct.compatibleWith(termStruct)) {
+//			report_error("Term types aren't compatible!", exprList);
+//			exprList.struct = Tab.noType;
+//			return;
+//		}
+		exprList.struct = Tab.intType;
+	}
+	
+	//TERMS PROCESSING
+	
+	public void visit(Terms termList) {
+		termList.struct = termList.getMulFactorList().struct;
+	}
+	
+	public void visit(FactorList factorList) {
+		Struct factor = factorList.getFactor().struct, factors = factorList.getMulFactorList().struct;
+		if(factor != Tab.intType || factors != Tab.intType) {
+			report_error("Factors in multiply operation must be int type!", factorList);
+			factorList.struct = Tab.noType;
 			return;
 		}
-		exprList.struct = Tab.intType;
+//		if(!factor.compatibleWith(factors)) {
+//			report_error("Factors in multiply operation aren't compatible!", factorList);
+//			factorList.struct = Tab.noType;
+//			return;
+//		}
+		
+		factorList.struct = Tab.intType;
+	}
+	
+	public void visit(SingleFactor factor) {
+		factor.struct = factor.getFactor().struct;
+	}
+	
+	//FUNCTION RETURN PROCESSING
+	
+	public void visit(ReturnNoExprStmt returnExpr) {
+		
+	}
+	
+	//CONDITIONS PROCESSING
+	
+	
+	public void visit(CondFactTwoExpr condFact) {
+		Struct leftExpr = condFact.getExpr().struct, rightExpr = condFact.getExpr1().struct;
+		if(!leftExpr.compatibleWith(rightExpr)) {
+			report_error("Types aren't compatible!", condFact);
+			return;
+		}
+		
+		if(leftExpr.getKind() == Struct.Array || rightExpr.getKind() == Struct.Array
+				|| leftExpr.getKind() == Struct.Class || rightExpr.getKind() == Struct.Class) {
+			if(relOp != "==" && relOp != "!=") {
+				report_error("Unsupported operation on type variables! Acceptable operations are == or !=", condFact);
+				return;
+			}
+		}
+		
+	}
+	
+	public void visit(CondFactOneExpr condFact) {
+		Struct expr = condFact.getExpr().struct;
+		if(expr != SemanticAnalyzer.boolType) {
+			report_error("Condition isn't bool type!", condFact);
+		}
 	}
 	
 	//FUNCTIONS PROCESSING

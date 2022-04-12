@@ -1,28 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class OrConditions extends ConditionTermList {
+public class SingleCondition extends Condition {
 
-    private ConditionTermList ConditionTermList;
     private ConditionTerm ConditionTerm;
 
-    public OrConditions (ConditionTermList ConditionTermList, ConditionTerm ConditionTerm) {
-        this.ConditionTermList=ConditionTermList;
-        if(ConditionTermList!=null) ConditionTermList.setParent(this);
+    public SingleCondition (ConditionTerm ConditionTerm) {
         this.ConditionTerm=ConditionTerm;
         if(ConditionTerm!=null) ConditionTerm.setParent(this);
-    }
-
-    public ConditionTermList getConditionTermList() {
-        return ConditionTermList;
-    }
-
-    public void setConditionTermList(ConditionTermList ConditionTermList) {
-        this.ConditionTermList=ConditionTermList;
     }
 
     public ConditionTerm getConditionTerm() {
@@ -38,18 +27,15 @@ public class OrConditions extends ConditionTermList {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(ConditionTermList!=null) ConditionTermList.accept(visitor);
         if(ConditionTerm!=null) ConditionTerm.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(ConditionTermList!=null) ConditionTermList.traverseTopDown(visitor);
         if(ConditionTerm!=null) ConditionTerm.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(ConditionTermList!=null) ConditionTermList.traverseBottomUp(visitor);
         if(ConditionTerm!=null) ConditionTerm.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -57,13 +43,7 @@ public class OrConditions extends ConditionTermList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("OrConditions(\n");
-
-        if(ConditionTermList!=null)
-            buffer.append(ConditionTermList.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
+        buffer.append("SingleCondition(\n");
 
         if(ConditionTerm!=null)
             buffer.append(ConditionTerm.toString("  "+tab));
@@ -72,7 +52,7 @@ public class OrConditions extends ConditionTermList {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [OrConditions]");
+        buffer.append(") [SingleCondition]");
         return buffer.toString();
     }
 }

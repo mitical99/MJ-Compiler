@@ -1,20 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class Conditions extends Condition {
 
+    private Condition Condition;
     private ConditionTerm ConditionTerm;
-    private ConditionTermList ConditionTermList;
 
-    public Conditions (ConditionTerm ConditionTerm, ConditionTermList ConditionTermList) {
+    public Conditions (Condition Condition, ConditionTerm ConditionTerm) {
+        this.Condition=Condition;
+        if(Condition!=null) Condition.setParent(this);
         this.ConditionTerm=ConditionTerm;
         if(ConditionTerm!=null) ConditionTerm.setParent(this);
-        this.ConditionTermList=ConditionTermList;
-        if(ConditionTermList!=null) ConditionTermList.setParent(this);
+    }
+
+    public Condition getCondition() {
+        return Condition;
+    }
+
+    public void setCondition(Condition Condition) {
+        this.Condition=Condition;
     }
 
     public ConditionTerm getConditionTerm() {
@@ -25,32 +33,24 @@ public class Conditions extends Condition {
         this.ConditionTerm=ConditionTerm;
     }
 
-    public ConditionTermList getConditionTermList() {
-        return ConditionTermList;
-    }
-
-    public void setConditionTermList(ConditionTermList ConditionTermList) {
-        this.ConditionTermList=ConditionTermList;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Condition!=null) Condition.accept(visitor);
         if(ConditionTerm!=null) ConditionTerm.accept(visitor);
-        if(ConditionTermList!=null) ConditionTermList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Condition!=null) Condition.traverseTopDown(visitor);
         if(ConditionTerm!=null) ConditionTerm.traverseTopDown(visitor);
-        if(ConditionTermList!=null) ConditionTermList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Condition!=null) Condition.traverseBottomUp(visitor);
         if(ConditionTerm!=null) ConditionTerm.traverseBottomUp(visitor);
-        if(ConditionTermList!=null) ConditionTermList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -59,14 +59,14 @@ public class Conditions extends Condition {
         buffer.append(tab);
         buffer.append("Conditions(\n");
 
-        if(ConditionTerm!=null)
-            buffer.append(ConditionTerm.toString("  "+tab));
+        if(Condition!=null)
+            buffer.append(Condition.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ConditionTermList!=null)
-            buffer.append(ConditionTermList.toString("  "+tab));
+        if(ConditionTerm!=null)
+            buffer.append(ConditionTerm.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

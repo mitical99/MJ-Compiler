@@ -1,20 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 14:50:24
+// 12/3/2022 18:29:50
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConditionTerms extends ConditionTerm {
 
+    private ConditionTerm ConditionTerm;
     private CondFact CondFact;
-    private CondFactList CondFactList;
 
-    public ConditionTerms (CondFact CondFact, CondFactList CondFactList) {
+    public ConditionTerms (ConditionTerm ConditionTerm, CondFact CondFact) {
+        this.ConditionTerm=ConditionTerm;
+        if(ConditionTerm!=null) ConditionTerm.setParent(this);
         this.CondFact=CondFact;
         if(CondFact!=null) CondFact.setParent(this);
-        this.CondFactList=CondFactList;
-        if(CondFactList!=null) CondFactList.setParent(this);
+    }
+
+    public ConditionTerm getConditionTerm() {
+        return ConditionTerm;
+    }
+
+    public void setConditionTerm(ConditionTerm ConditionTerm) {
+        this.ConditionTerm=ConditionTerm;
     }
 
     public CondFact getCondFact() {
@@ -25,32 +33,24 @@ public class ConditionTerms extends ConditionTerm {
         this.CondFact=CondFact;
     }
 
-    public CondFactList getCondFactList() {
-        return CondFactList;
-    }
-
-    public void setCondFactList(CondFactList CondFactList) {
-        this.CondFactList=CondFactList;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ConditionTerm!=null) ConditionTerm.accept(visitor);
         if(CondFact!=null) CondFact.accept(visitor);
-        if(CondFactList!=null) CondFactList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ConditionTerm!=null) ConditionTerm.traverseTopDown(visitor);
         if(CondFact!=null) CondFact.traverseTopDown(visitor);
-        if(CondFactList!=null) CondFactList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ConditionTerm!=null) ConditionTerm.traverseBottomUp(visitor);
         if(CondFact!=null) CondFact.traverseBottomUp(visitor);
-        if(CondFactList!=null) CondFactList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -59,14 +59,14 @@ public class ConditionTerms extends ConditionTerm {
         buffer.append(tab);
         buffer.append("ConditionTerms(\n");
 
-        if(CondFact!=null)
-            buffer.append(CondFact.toString("  "+tab));
+        if(ConditionTerm!=null)
+            buffer.append(ConditionTerm.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(CondFactList!=null)
-            buffer.append(CondFactList.toString("  "+tab));
+        if(CondFact!=null)
+            buffer.append(CondFact.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
