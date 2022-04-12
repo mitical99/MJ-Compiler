@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/3/2022 21:18:49
+// 12/3/2022 14:50:24
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -23,7 +23,6 @@ public interface Visitor {
     public void visit(ConstDeclLine ConstDeclLine);
     public void visit(Factor Factor);
     public void visit(CondFactList CondFactList);
-    public void visit(AssignOrErrorStatement AssignOrErrorStatement);
     public void visit(Designator Designator);
     public void visit(ProgDecl ProgDecl);
     public void visit(Term Term);
@@ -54,7 +53,6 @@ public interface Visitor {
     public void visit(MethodDeclList MethodDeclList);
     public void visit(SingleStatement SingleStatement);
     public void visit(FormPars FormPars);
-    public void visit(AdditionalTerm AdditionalTerm);
     public void visit(Moduo Moduo);
     public void visit(Division Division);
     public void visit(Multiply Multiply);
@@ -78,11 +76,10 @@ public interface Visitor {
     public void visit(FactorNumberConstant FactorNumberConstant);
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct);
     public void visit(FactorDesignatorOnly FactorDesignatorOnly);
-    public void visit(NoFactorList NoFactorList);
+    public void visit(SingleFactor SingleFactor);
     public void visit(FactorList FactorList);
     public void visit(Terms Terms);
-    public void visit(NoAddTerm NoAddTerm);
-    public void visit(AddTerm AddTerm);
+    public void visit(MoreExpr MoreExpr);
     public void visit(PositiveExpr PositiveExpr);
     public void visit(NegativeExpr NegativeExpr);
     public void visit(CondFactTwoExpr CondFactTwoExpr);
@@ -98,12 +95,11 @@ public interface Visitor {
     public void visit(OrConditions OrConditions);
     public void visit(ErrorCondition ErrorCondition);
     public void visit(Conditions Conditions);
-    public void visit(ErrorAssign ErrorAssign);
-    public void visit(ExprStatement ExprStatement);
     public void visit(FunctionNameDesignator FunctionNameDesignator);
     public void visit(DecStmt DecStmt);
     public void visit(IncStmt IncStmt);
     public void visit(FuncCall FuncCall);
+    public void visit(AssignError AssignError);
     public void visit(AssignStmt AssignStmt);
     public void visit(DoStmt DoStmt);
     public void visit(IfStmt IfStmt);

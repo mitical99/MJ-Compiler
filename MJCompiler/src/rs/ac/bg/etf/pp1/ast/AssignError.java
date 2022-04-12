@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/3/2022 21:18:49
+// 12/3/2022 14:50:24
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoAddTerm extends AdditionalTerm {
+public class AssignError extends DesignatorStatement {
 
-    public NoAddTerm () {
+    public AssignError () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoAddTerm extends AdditionalTerm {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoAddTerm(\n");
+        buffer.append("AssignError(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoAddTerm]");
+        buffer.append(") [AssignError]");
         return buffer.toString();
     }
 }

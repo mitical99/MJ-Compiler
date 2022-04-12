@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/3/2022 21:18:49
+// 12/3/2022 14:50:24
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,10 @@ package rs.ac.bg.etf.pp1.ast;
 public class NegativeExpr extends Expr {
 
     private Term Term;
-    private AdditionalTerm AdditionalTerm;
 
-    public NegativeExpr (Term Term, AdditionalTerm AdditionalTerm) {
+    public NegativeExpr (Term Term) {
         this.Term=Term;
         if(Term!=null) Term.setParent(this);
-        this.AdditionalTerm=AdditionalTerm;
-        if(AdditionalTerm!=null) AdditionalTerm.setParent(this);
     }
 
     public Term getTerm() {
@@ -25,32 +22,21 @@ public class NegativeExpr extends Expr {
         this.Term=Term;
     }
 
-    public AdditionalTerm getAdditionalTerm() {
-        return AdditionalTerm;
-    }
-
-    public void setAdditionalTerm(AdditionalTerm AdditionalTerm) {
-        this.AdditionalTerm=AdditionalTerm;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(Term!=null) Term.accept(visitor);
-        if(AdditionalTerm!=null) AdditionalTerm.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Term!=null) Term.traverseTopDown(visitor);
-        if(AdditionalTerm!=null) AdditionalTerm.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Term!=null) Term.traverseBottomUp(visitor);
-        if(AdditionalTerm!=null) AdditionalTerm.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -61,12 +47,6 @@ public class NegativeExpr extends Expr {
 
         if(Term!=null)
             buffer.append(Term.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
-        if(AdditionalTerm!=null)
-            buffer.append(AdditionalTerm.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

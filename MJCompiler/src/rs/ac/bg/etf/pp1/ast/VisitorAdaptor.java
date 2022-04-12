@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/3/2022 21:18:49
+// 12/3/2022 14:50:24
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -23,7 +23,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstDeclLine ConstDeclLine) { }
     public void visit(Factor Factor) { }
     public void visit(CondFactList CondFactList) { }
-    public void visit(AssignOrErrorStatement AssignOrErrorStatement) { }
     public void visit(Designator Designator) { }
     public void visit(ProgDecl ProgDecl) { }
     public void visit(Term Term) { }
@@ -54,7 +53,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MethodDeclList MethodDeclList) { }
     public void visit(SingleStatement SingleStatement) { }
     public void visit(FormPars FormPars) { }
-    public void visit(AdditionalTerm AdditionalTerm) { }
     public void visit(Moduo Moduo) { visit(); }
     public void visit(Division Division) { visit(); }
     public void visit(Multiply Multiply) { visit(); }
@@ -78,11 +76,10 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FactorNumberConstant FactorNumberConstant) { visit(); }
     public void visit(FactorDesignatorWithAct FactorDesignatorWithAct) { visit(); }
     public void visit(FactorDesignatorOnly FactorDesignatorOnly) { visit(); }
-    public void visit(NoFactorList NoFactorList) { visit(); }
+    public void visit(SingleFactor SingleFactor) { visit(); }
     public void visit(FactorList FactorList) { visit(); }
     public void visit(Terms Terms) { visit(); }
-    public void visit(NoAddTerm NoAddTerm) { visit(); }
-    public void visit(AddTerm AddTerm) { visit(); }
+    public void visit(MoreExpr MoreExpr) { visit(); }
     public void visit(PositiveExpr PositiveExpr) { visit(); }
     public void visit(NegativeExpr NegativeExpr) { visit(); }
     public void visit(CondFactTwoExpr CondFactTwoExpr) { visit(); }
@@ -98,12 +95,11 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(OrConditions OrConditions) { visit(); }
     public void visit(ErrorCondition ErrorCondition) { visit(); }
     public void visit(Conditions Conditions) { visit(); }
-    public void visit(ErrorAssign ErrorAssign) { visit(); }
-    public void visit(ExprStatement ExprStatement) { visit(); }
     public void visit(FunctionNameDesignator FunctionNameDesignator) { visit(); }
     public void visit(DecStmt DecStmt) { visit(); }
     public void visit(IncStmt IncStmt) { visit(); }
     public void visit(FuncCall FuncCall) { visit(); }
+    public void visit(AssignError AssignError) { visit(); }
     public void visit(AssignStmt AssignStmt) { visit(); }
     public void visit(DoStmt DoStmt) { visit(); }
     public void visit(IfStmt IfStmt) { visit(); }

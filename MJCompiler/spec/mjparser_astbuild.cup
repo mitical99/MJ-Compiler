@@ -67,7 +67,6 @@ nonterminal  DesignatorField DesignatorField;
 nonterminal VarDeclLine VarDeclLine;
 nonterminal ConstDeclLine ConstDeclLine;
 nonterminal OneFormParam OneFormParam;
-nonterminal AssignOrErrorStatement AssignOrErrorStatement;
 nonterminal ExtendedClass ExtendedClass;
 nonterminal InsideClassDeclList InsideClassDeclList;
 nonterminal FormPars FormPars;
@@ -88,7 +87,6 @@ nonterminal CondFact CondFact;
 nonterminal ActParams ActParams;
 nonterminal Condition Condition;
 nonterminal Relop Relop;
-nonterminal AdditionalTerm AdditionalTerm;
 nonterminal MulFactorList MulFactorList;
 nonterminal Mulop Mulop;
 nonterminal Addop Addop;
@@ -255,7 +253,10 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new
 				(DoStmt) DO Statement:S1 WHILE LPAREN Condition:C2 RPAREN SEMI {: RESULT=new DoStmt(S1, C2); RESULT.setLine(S1left); :}
 				;
 
-DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 AssignOrErrorStatement:A2 {: RESULT=new AssignStmt(dest, A1, A2); RESULT.setLine(destleft); :}
+DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 Expr:E2 SEMI {: RESULT=new AssignStmt(dest, A1, E2); RESULT.setLine(destleft); :}
+					|
+					(AssignError) error SEMI:l
+					{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :} {: RESULT=new AssignError(); :}
 					|
 					(FuncCall) FunctionName:F1 LPAREN ActParams:A2 RPAREN SEMI {: RESULT=new FuncCall(F1, A2); RESULT.setLine(F1left); :}
 					|
@@ -266,11 +267,6 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 AssignOrErrorSt
 
 FunctionName ::= (FunctionNameDesignator) Designator:funcName {: RESULT=new FunctionNameDesignator(funcName); RESULT.setLine(funcNameleft); :};
 
-AssignOrErrorStatement ::= (ExprStatement) Expr:E1 SEMI {: RESULT=new ExprStatement(E1); RESULT.setLine(E1left); :}
-						|
-						(ErrorAssign) error SEMI:l
-						{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :} {: RESULT=new ErrorAssign(); :}
-						;
 
 Condition ::= (Conditions) ConditionTerm:C1 ConditionTermList:C2 {: RESULT=new Conditions(C1, C2); RESULT.setLine(C1left); :}
 			|
@@ -307,21 +303,18 @@ CondFact ::= (CondFactOneExpr) Expr:E1 {: RESULT=new CondFactOneExpr(E1); RESULT
 			;
 
 
-Expr ::= (NegativeExpr) MINUS Term:t AdditionalTerm:A1 {: RESULT=new NegativeExpr(t, A1); RESULT.setLine(tleft); :}
+Expr ::= (NegativeExpr) MINUS Term:t {: RESULT=new NegativeExpr(t); RESULT.setLine(tleft); :}
 		|
-		(PositiveExpr) Term:t AdditionalTerm:A1 {: RESULT=new PositiveExpr(t, A1); RESULT.setLine(tleft); :}
+		(PositiveExpr) Term:t {: RESULT=new PositiveExpr(t); RESULT.setLine(tleft); :}
+		|
+		(MoreExpr) Expr:E1 Addop:A2 Term:T3 {: RESULT=new MoreExpr(E1, A2, T3); RESULT.setLine(E1left); :}
 		;
-		
-AdditionalTerm ::= (AddTerm) AdditionalTerm:te Addop:A1 Term:t {: RESULT=new AddTerm(te, A1, t); RESULT.setLine(teleft); :}
-				|
-				(NoAddTerm) {: RESULT=new NoAddTerm(); :} /* epsilon */
-				;
 
-Term ::= (Terms) Factor:t MulFactorList:M1 {: RESULT=new Terms(t, M1); RESULT.setLine(tleft); :};
+Term ::= (Terms) MulFactorList:M1 {: RESULT=new Terms(M1); RESULT.setLine(M1left); :};
 
 MulFactorList ::= (FactorList) MulFactorList:M1 Mulop:M2 Factor:F3 {: RESULT=new FactorList(M1, M2, F3); RESULT.setLine(M1left); :}
 				|
-				(NoFactorList) {: RESULT=new NoFactorList(); :} /* epsilon */
+				(SingleFactor) Factor:F1 {: RESULT=new SingleFactor(F1); RESULT.setLine(F1left); :}
 				;
 	
 Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnly(d); RESULT.setLine(dleft); :}

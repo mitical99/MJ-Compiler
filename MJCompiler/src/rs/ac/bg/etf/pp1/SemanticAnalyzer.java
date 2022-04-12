@@ -261,7 +261,21 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		actualArgFunctionStack.push(new ArrayList<Struct>());
 	}
 	
+	public void visit(AssignStmt assignStmt) {
+		Obj leftOperator = assignStmt.getDesignator().obj;
+		Struct rightType = assignStmt.getExpr().struct;
+		if(!checkRightValueType(leftOperator, assignStmt)) {
+			return;
+		}
+		//check type compatibility
+		if(!rightType.assignableTo(leftOperator.getType())) {
+			report_error("Incompatible types in assigment to a variable " + leftOperator.getName(), assignStmt);
+		}
+	}
+	
 	private boolean checkRightValueType(Obj node, SyntaxNode info) {
+		if(node == Tab.noObj)
+			return false;
 		int kind = node.getKind();
 		if(kind != Obj.Var && kind != Obj.Elem && kind != Obj.Fld) {
 			report_error("Wrong right value type in operation!", info);
@@ -276,7 +290,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		
-		if(node.getType()!= Tab.intType) {
+		if(node.getType() != Tab.intType) {
 			report_error("Increment can be done only on integer type variables!", incStmt);
 		}
 	}
@@ -287,10 +301,41 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		
-		if(node.getType()!= Tab.intType) {
-			report_error("Increment can be done only on integer type variables!", decStmt);
+		if(node.getType() != Tab.intType) {
+			report_error("Decrement can be done only on integer type variables!", decStmt);
 		}
 	}
+	//EXPRESSIONS PROCESSING
+	
+	public void visit(NegativeExpr expr) {
+		if(expr.getTerm().struct != Tab.intType) {
+			report_error("Used term must be int type!", expr);
+			expr.struct = Tab.noType;
+			return;
+		}
+		expr.struct = Tab.intType;
+	}
+	
+	public void visit(PositiveExpr expr) {
+		expr.struct = expr.getTerm().struct;
+	}
+	
+	public void visit(MoreExpr exprList) {
+		Struct exprStruct = exprList.getExpr().struct, termStruct = exprList.getTerm().struct;
+		if(exprStruct != Tab.intType || termStruct != Tab.intType) {
+			report_error("Terms in add operation must be int type!", exprList);
+			exprList.struct = Tab.noType;
+			return;
+		}
+		if(!exprStruct.compatibleWith(termStruct)) {
+			report_error("Term types aren't compatible!", exprList);
+			exprList.struct = Tab.noType;
+			return;
+		}
+		exprList.struct = Tab.intType;
+	}
+	
+	//FUNCTIONS PROCESSING
 	
 	private boolean checkFunctionCall(String functionName, SyntaxNode info) {
 		Obj function = Tab.find(functionName);
@@ -298,7 +343,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Called function " + functionName + " not declared yet!", info);
 			return false;
 		}
-		//check if used typename is function
+		//check if used typename is a function
 		if(function.getKind() != Obj.Meth) {
 			report_error("Used variable " + functionName + " isn't a function!", info);
 			return false;
@@ -338,6 +383,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		
 	}
 	
+	//DESIGNATOR PROCESSING
 	public void visit(FactorDesignatorOnly factor) {
 		factor.struct = factor.getDesignator().obj.getType();
 	}

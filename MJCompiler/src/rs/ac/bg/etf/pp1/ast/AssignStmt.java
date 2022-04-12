@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/3/2022 21:18:49
+// 12/3/2022 14:50:24
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,15 +9,15 @@ public class AssignStmt extends DesignatorStatement {
 
     private Designator Designator;
     private Assignop Assignop;
-    private AssignOrErrorStatement AssignOrErrorStatement;
+    private Expr Expr;
 
-    public AssignStmt (Designator Designator, Assignop Assignop, AssignOrErrorStatement AssignOrErrorStatement) {
+    public AssignStmt (Designator Designator, Assignop Assignop, Expr Expr) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
         this.Assignop=Assignop;
         if(Assignop!=null) Assignop.setParent(this);
-        this.AssignOrErrorStatement=AssignOrErrorStatement;
-        if(AssignOrErrorStatement!=null) AssignOrErrorStatement.setParent(this);
+        this.Expr=Expr;
+        if(Expr!=null) Expr.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -36,12 +36,12 @@ public class AssignStmt extends DesignatorStatement {
         this.Assignop=Assignop;
     }
 
-    public AssignOrErrorStatement getAssignOrErrorStatement() {
-        return AssignOrErrorStatement;
+    public Expr getExpr() {
+        return Expr;
     }
 
-    public void setAssignOrErrorStatement(AssignOrErrorStatement AssignOrErrorStatement) {
-        this.AssignOrErrorStatement=AssignOrErrorStatement;
+    public void setExpr(Expr Expr) {
+        this.Expr=Expr;
     }
 
     public void accept(Visitor visitor) {
@@ -51,20 +51,20 @@ public class AssignStmt extends DesignatorStatement {
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
         if(Assignop!=null) Assignop.accept(visitor);
-        if(AssignOrErrorStatement!=null) AssignOrErrorStatement.accept(visitor);
+        if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
         if(Assignop!=null) Assignop.traverseTopDown(visitor);
-        if(AssignOrErrorStatement!=null) AssignOrErrorStatement.traverseTopDown(visitor);
+        if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
         if(Assignop!=null) Assignop.traverseBottomUp(visitor);
-        if(AssignOrErrorStatement!=null) AssignOrErrorStatement.traverseBottomUp(visitor);
+        if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -85,8 +85,8 @@ public class AssignStmt extends DesignatorStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(AssignOrErrorStatement!=null)
-            buffer.append(AssignOrErrorStatement.toString("  "+tab));
+        if(Expr!=null)
+            buffer.append(Expr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

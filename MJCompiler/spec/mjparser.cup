@@ -57,12 +57,12 @@ terminal Character CHAR;
 
 nonterminal ProgDeclList, ProgDecl, MethodDeclList, VarDeclList;
 nonterminal ConstDecl, ConstDeclLineList, ClassDeclLine, RecordDeclLine,  DesignatorField;
-nonterminal VarDeclLine, ConstDeclLine, OneFormParam, AssignOrErrorStatement;
+nonterminal VarDeclLine, ConstDeclLine, OneFormParam;
 nonterminal ExtendedClass, InsideClassDeclList, FormPars, StatementList, DesignatorStatement;
 nonterminal FormParams, Statement, SingleStatement, Label, Statements;
 nonterminal Assignop, Matched, Unmatched;
 nonterminal ConditionTermList, ConditionTerm, CondFactList, CondFact, ActParams, Condition;
-nonterminal Relop, AdditionalTerm, MulFactorList, Mulop, Addop, DesignatorFieldList;
+nonterminal Relop, MulFactorList, Mulop, Addop, DesignatorFieldList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
@@ -225,7 +225,10 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				(DoStmt) DO Statement WHILE LPAREN Condition RPAREN SEMI
 				;
 
-DesignatorStatement ::= (AssignStmt) Designator:dest Assignop AssignOrErrorStatement
+DesignatorStatement ::= (AssignStmt) Designator:dest Assignop Expr SEMI
+					|
+					(AssignError) error SEMI:l
+					{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
 					|
 					(FuncCall) FunctionName LPAREN ActParams RPAREN SEMI
 					|
@@ -236,11 +239,6 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop AssignOrErrorState
 
 FunctionName ::= (FunctionNameDesignator) Designator:funcName;
 
-AssignOrErrorStatement ::= (ExprStatement) Expr SEMI
-						|
-						(ErrorAssign) error SEMI:l
-						{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
-						;
 
 Condition ::= (Conditions) ConditionTerm ConditionTermList
 			|
@@ -277,21 +275,18 @@ CondFact ::= (CondFactOneExpr) Expr
 			;
 
 
-Expr ::= (NegativeExpr) MINUS Term:t AdditionalTerm
+Expr ::= (NegativeExpr) MINUS Term:t
 		|
-		(PositiveExpr) Term:t AdditionalTerm
+		(PositiveExpr) Term:t
+		|
+		(MoreExpr) Expr Addop Term
 		;
-		
-AdditionalTerm ::= (AddTerm) AdditionalTerm:te Addop Term:t
-				|
-				(NoAddTerm) /* epsilon */
-				;
 
-Term ::= (Terms) Factor:t MulFactorList;
+Term ::= (Terms) MulFactorList;
 
 MulFactorList ::= (FactorList) MulFactorList Mulop Factor
 				|
-				(NoFactorList) /* epsilon */
+				(SingleFactor) Factor
 				;
 	
 Factor ::= (FactorDesignatorOnly) Designator:d
