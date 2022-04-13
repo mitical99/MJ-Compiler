@@ -56,6 +56,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		log.info(msg.toString());
 	}
 	
+	//PROGRAM DECL PROCESSING
+	
 	public void visit(ProgName progName) {
 		progName.obj = Tab.insert(Obj.Prog, progName.getProgName(), Tab.noType);
 		Tab.openScope();
@@ -65,6 +67,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
 	}
+	
+	//TYPE PROCESSING
 	
 	public void visit(Type type) {
 		Obj typeNode = Tab.find(type.getTypeName());
@@ -84,25 +88,27 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currLineType = type.struct;
 	}
 	
+	//CONST PROCESSING
+	
 	private boolean checkForConstDeclErrors(String constName, Struct constType, SyntaxNode info) {
 		if(Tab.find(constName) != Tab.noObj) { //present in table already
 			if(Tab.currentScope.findSymbol(constName) != null) { //present in table and in the same scope
-			report_error("Constant with name" + constName + "already exists in symbol table", info);
-			return true;
+			report_error("Variable with name" + constName + "already exists in symbol table", info);
+			return false;
 			}
 		}
 		if(!currLineType.equals(constType)) { //Error in type constant and assigned value
 			report_error("Incompatible types of assigned value and declared constant type!", info);
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	
 	public void visit(ConstNumberDeclaration numConst) {
 		String constName = numConst.getConstName();
 		Integer constValue = numConst.getNumConstValue();
-		if(this.checkForConstDeclErrors(constName, Tab.intType, numConst))
+		if(!this.checkForConstDeclErrors(constName, Tab.intType, numConst))
 			return;
 		Obj constNode = Tab.insert(Obj.Con, constName, Tab.intType);
 		constNode.setAdr(constValue);
@@ -129,27 +135,30 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			constNode.setAdr(0);
 	}
 	
-	
+	//VARIABLE PROCESSING
 	private boolean checkForVarDeclErrors(String varName, SyntaxNode info) {
 		if(Tab.find(varName) != Tab.noObj) {
 			if(Tab.currentScope.findSymbol(varName) != null) {
 			report_error("Variable with name" + varName + "already exists in symbol table", info);
-			return true;
+			return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public void visit(Var var) {
 		String varName = var.getVarName();
-		if(this.checkForVarDeclErrors(varName, var)) 
+		if(!this.checkForVarDeclErrors(varName, var)) 
 			return;
-		Obj varNode = Tab.insert(Obj.Var, varName, currLineType);
+		if(isRecordField)
+			Tab.insert(Obj.Fld, varName, currLineType);
+		else 
+			Tab.insert(Obj.Var, varName, currLineType);
 	}
 	
 	public void visit(ArrayVar arrayVar) {
 		String varName = arrayVar.getVarName();
-		if(this.checkForVarDeclErrors(varName, arrayVar)) 
+		if(!this.checkForVarDeclErrors(varName, arrayVar)) 
 			return;
 		Struct varType = new Struct(Struct.Array, currLineType);
 		Obj varNode = null;
@@ -159,17 +168,19 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			varNode = Tab.insert(Obj.Var, varName, varType);
 	}
 	
+	//RECORD PROCESSING
+	
 	private boolean checkForRecordDeclErrors(String recordName, SyntaxNode info) {
 		if(Tab.find(recordName) != Tab.noObj) {
 			report_error("Record name" + recordName + "already declared", info);
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	public void visit(RecordName recordName) {
 		String recName = recordName.getRecordName();
-		if(this.checkForRecordDeclErrors(recName, recordName))
+		if(!this.checkForRecordDeclErrors(recName, recordName))
 			return;
 		
 		isRecordField = true;
@@ -218,7 +229,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(OneElemParam singleParam) {
 		String paramName = singleParam.getParamName();
-		if(this.checkForVarDeclErrors(paramName, singleParam)) {
+		if(!this.checkForVarDeclErrors(paramName, singleParam)) {
 			return;
 		}
 		Obj paramNode = Tab.insert(Obj.Var, paramName, currLineType);
@@ -227,7 +238,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(ArrayParam arrayParam) {
 		String paramName = arrayParam.getParamName();
-		if(this.checkForVarDeclErrors(paramName, arrayParam)) {
+		if(!this.checkForVarDeclErrors(paramName, arrayParam)) {
 			return;
 		}
 		Struct varType = new Struct(Struct.Array, currLineType);
