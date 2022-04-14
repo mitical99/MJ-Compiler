@@ -219,31 +219,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(TypeRetMethodTypeName typeMethodName) {
 		String methodName = typeMethodName.getMethodName();
-		
 		if(!this.insertMethodInSymTable(methodName, currLineType)) {
 			report_error("Symbol with name " + methodName + " already exists in symbol table!", typeMethodName);
 		}
-	}
-	
-	//PARAMETERS IN FUNCTION PROCESSING
-	
-	public void visit(OneElemParam singleParam) {
-		String paramName = singleParam.getParamName();
-		if(!this.checkForVarDeclErrors(paramName, singleParam)) {
-			return;
-		}
-		Obj paramNode = Tab.insert(Obj.Var, paramName, currLineType);
-		formParamCount++;
-	}
-	
-	public void visit(ArrayParam arrayParam) {
-		String paramName = arrayParam.getParamName();
-		if(!this.checkForVarDeclErrors(paramName, arrayParam)) {
-			return;
-		}
-		Struct varType = new Struct(Struct.Array, currLineType);
-		Obj paramNode = Tab.insert(Obj.Var, paramName, varType);
-		formParamCount++;
 	}
 	
 	public void visit(MethodDeclaration method) {
@@ -265,6 +243,30 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.closeScope();
 	}
 	
+	//FORMAL PARAMETERS PROCESSING
+	
+	public void visit(OneElemParam singleParam) {
+		String paramName = singleParam.getParamName();
+		if(!this.checkForVarDeclErrors(paramName, singleParam)) {
+			return;
+		}
+		Obj paramNode = Tab.insert(Obj.Var, paramName, currLineType);
+		formParamCount++;
+	}
+	
+	public void visit(ArrayParam arrayParam) {
+		String paramName = arrayParam.getParamName();
+		if(!this.checkForVarDeclErrors(paramName, arrayParam)) {
+			return;
+		}
+		Struct varType = new Struct(Struct.Array, currLineType);
+		Obj paramNode = Tab.insert(Obj.Var, paramName, varType);
+		formParamCount++;
+	}
+
+	
+	//ACTUAL PARAMETERS PROCESSING
+	
 	public void visit(FirstParam param) {
 		actualArgFunctionStack.peek().add(param.getExpr().struct);
 	}
@@ -284,7 +286,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(FactorBoolConstant factor) {
-		factor.struct = boolType;
+		factor.struct = SemanticAnalyzer.boolType;
 	}
 	
 	public void visit(FunctionNameDesignator funcCall) {
@@ -318,12 +320,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	//PRINT PROCESSING
 	
-	private boolean checkPrintStmt(Struct exprStruct, SyntaxNode info) {
+	private void checkPrintStmt(Struct exprStruct, SyntaxNode info) {
 		if(exprStruct != Tab.intType && exprStruct != Tab.charType && exprStruct != SemanticAnalyzer.boolType) {
 			report_error("Variable in print statement isn't base type!", info);
-			return false;
 		}
-		return true;
 	}
 	
 	public void visit(PrintStmtNoNumConst printStmt) {
@@ -384,7 +384,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		//check type compatibility
 		if(!rightType.assignableTo(leftOperator.getType())) {
-			report_error("Incompatible types in assigment to a variable " + leftOperator.getName(), assignStmt);
+			report_error("Incompatible types in assigment to the variable " + leftOperator.getName(), assignStmt);
 		}
 	}
 	
