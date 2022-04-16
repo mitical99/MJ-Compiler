@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 21:59:59
+// 16/3/2022 22:58:49
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -50,6 +50,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstDecl ConstDecl) { }
     public void visit(RecordDeclLine RecordDeclLine) { }
     public void visit(CondFact CondFact) { }
+    public void visit(IfStatement IfStatement) { }
     public void visit(ConstDeclLineList ConstDeclLineList) { }
     public void visit(MethodDeclList MethodDeclList) { }
     public void visit(SingleStatement SingleStatement) { }
@@ -91,7 +92,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MoreParameters MoreParameters) { visit(); }
     public void visit(NoParameters NoParameters) { visit(); }
     public void visit(ActualParameters ActualParameters) { visit(); }
-    public void visit(ErrorCondition ErrorCondition) { visit(); }
     public void visit(SingleCondition SingleCondition) { visit(); }
     public void visit(Conditions Conditions) { visit(); }
     public void visit(FunctionNameDesignator FunctionNameDesignator) { visit(); }
@@ -101,6 +101,8 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AssignError AssignError) { visit(); }
     public void visit(AssignStmt AssignStmt) { visit(); }
     public void visit(DoWhileCounter DoWhileCounter) { visit(); }
+    public void visit(ErrorIf ErrorIf) { visit(); }
+    public void visit(CorrectIf CorrectIf) { visit(); }
     public void visit(DoStmt DoStmt) { visit(); }
     public void visit(IfStmt IfStmt) { visit(); }
     public void visit(PrintStmtNumConst PrintStmtNumConst) { visit(); }

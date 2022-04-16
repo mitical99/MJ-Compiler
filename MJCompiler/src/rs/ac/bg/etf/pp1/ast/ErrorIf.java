@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 21:59:59
+// 16/3/2022 22:58:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ErrorCondition extends Condition {
+public class ErrorIf extends IfStatement {
 
-    public ErrorCondition () {
+    public ErrorIf () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class ErrorCondition extends Condition {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ErrorCondition(\n");
+        buffer.append("ErrorIf(\n");
 
         buffer.append(tab);
-        buffer.append(") [ErrorCondition]");
+        buffer.append(") [ErrorIf]");
         return buffer.toString();
     }
 }

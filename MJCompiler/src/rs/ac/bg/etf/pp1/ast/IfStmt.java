@@ -1,31 +1,31 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 21:59:59
+// 16/3/2022 22:58:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class IfStmt extends SingleStatement {
 
-    private Condition Condition;
+    private IfStatement IfStatement;
     private Matched Matched;
     private Matched Matched1;
 
-    public IfStmt (Condition Condition, Matched Matched, Matched Matched1) {
-        this.Condition=Condition;
-        if(Condition!=null) Condition.setParent(this);
+    public IfStmt (IfStatement IfStatement, Matched Matched, Matched Matched1) {
+        this.IfStatement=IfStatement;
+        if(IfStatement!=null) IfStatement.setParent(this);
         this.Matched=Matched;
         if(Matched!=null) Matched.setParent(this);
         this.Matched1=Matched1;
         if(Matched1!=null) Matched1.setParent(this);
     }
 
-    public Condition getCondition() {
-        return Condition;
+    public IfStatement getIfStatement() {
+        return IfStatement;
     }
 
-    public void setCondition(Condition Condition) {
-        this.Condition=Condition;
+    public void setIfStatement(IfStatement IfStatement) {
+        this.IfStatement=IfStatement;
     }
 
     public Matched getMatched() {
@@ -49,20 +49,20 @@ public class IfStmt extends SingleStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Condition!=null) Condition.accept(visitor);
+        if(IfStatement!=null) IfStatement.accept(visitor);
         if(Matched!=null) Matched.accept(visitor);
         if(Matched1!=null) Matched1.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Condition!=null) Condition.traverseTopDown(visitor);
+        if(IfStatement!=null) IfStatement.traverseTopDown(visitor);
         if(Matched!=null) Matched.traverseTopDown(visitor);
         if(Matched1!=null) Matched1.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Condition!=null) Condition.traverseBottomUp(visitor);
+        if(IfStatement!=null) IfStatement.traverseBottomUp(visitor);
         if(Matched!=null) Matched.traverseBottomUp(visitor);
         if(Matched1!=null) Matched1.traverseBottomUp(visitor);
         accept(visitor);
@@ -73,8 +73,8 @@ public class IfStmt extends SingleStatement {
         buffer.append(tab);
         buffer.append("IfStmt(\n");
 
-        if(Condition!=null)
-            buffer.append(Condition.toString("  "+tab));
+        if(IfStatement!=null)
+            buffer.append(IfStatement.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

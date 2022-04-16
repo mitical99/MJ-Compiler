@@ -56,6 +56,9 @@ import java_cup.runtime.Symbol;
 "super" 	{return new_symbol(sym.SUPER, yytext()); }
 "goto" 		{return new_symbol(sym.GOTO, yytext()); }
 "record" 	{return new_symbol(sym.RECORD, yytext()); }
+"true" 		{return new_symbol(sym.BOOL, true); }
+"false"		{return new_symbol(sym.BOOL, false); }
+'.' 		{return new_symbol(sym.CHAR, yytext().charAt(1)); }
 "++" 		{return new_symbol(sym.INC, yytext()); }
 "--" 		{return new_symbol(sym.DEC, yytext()); }
 "*" 		{return new_symbol(sym.MUL, yytext()); }
@@ -69,7 +72,7 @@ import java_cup.runtime.Symbol;
 "<=" 		{return new_symbol(sym.LSE, yytext()); }
 "<" 		{return new_symbol(sym.LS, yytext()); }
 "&&" 		{return new_symbol(sym.AND, yytext()); }
-"||" 		{return new_symbol(sym.PLUS, yytext()); }
+"||" 		{return new_symbol(sym.OR, yytext()); }
 "+" 		{return new_symbol(sym.PLUS, yytext()); }
 "-" 		{return new_symbol(sym.MINUS, yytext()); }
 "=" 		{return new_symbol(sym.EQUAL, yytext()); }
@@ -87,8 +90,6 @@ import java_cup.runtime.Symbol;
 <COMMENT> . {yybegin(COMMENT); }
 <COMMENT> "\r\n" {yybegin(YYINITIAL); }
 [0-9]+		{return new_symbol(sym.NUMBER, Integer.parseInt(yytext())); }
-(true|false) {return new_symbol(sym.BOOL, Boolean.parseBoolean(yytext())); }
-'.' {return new_symbol(sym.CHAR, yytext().charAt(1)); }
 ([a-z]|[A-Z])[a-z|A-Z|0-9|_]* {return new_symbol(sym.IDENT, yytext()); }
 
 . {System.err.println("Leksicka greska (" + yytext() + ") u liniji " + (yyline + 1)); }

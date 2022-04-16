@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/3/2022 21:59:59
+// 16/3/2022 22:58:49
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class UnmatchedIf extends Unmatched {
 
-    private Condition Condition;
+    private IfStatement IfStatement;
     private Statement Statement;
 
-    public UnmatchedIf (Condition Condition, Statement Statement) {
-        this.Condition=Condition;
-        if(Condition!=null) Condition.setParent(this);
+    public UnmatchedIf (IfStatement IfStatement, Statement Statement) {
+        this.IfStatement=IfStatement;
+        if(IfStatement!=null) IfStatement.setParent(this);
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
     }
 
-    public Condition getCondition() {
-        return Condition;
+    public IfStatement getIfStatement() {
+        return IfStatement;
     }
 
-    public void setCondition(Condition Condition) {
-        this.Condition=Condition;
+    public void setIfStatement(IfStatement IfStatement) {
+        this.IfStatement=IfStatement;
     }
 
     public Statement getStatement() {
@@ -38,18 +38,18 @@ public class UnmatchedIf extends Unmatched {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Condition!=null) Condition.accept(visitor);
+        if(IfStatement!=null) IfStatement.accept(visitor);
         if(Statement!=null) Statement.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Condition!=null) Condition.traverseTopDown(visitor);
+        if(IfStatement!=null) IfStatement.traverseTopDown(visitor);
         if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Condition!=null) Condition.traverseBottomUp(visitor);
+        if(IfStatement!=null) IfStatement.traverseBottomUp(visitor);
         if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -59,8 +59,8 @@ public class UnmatchedIf extends Unmatched {
         buffer.append(tab);
         buffer.append("UnmatchedIf(\n");
 
-        if(Condition!=null)
-            buffer.append(Condition.toString("  "+tab));
+        if(IfStatement!=null)
+            buffer.append(IfStatement.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

@@ -5,21 +5,21 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class PositiveExpr extends Expr {
+public class CorrectIf extends IfStatement {
 
-    private Term Term;
+    private Condition Condition;
 
-    public PositiveExpr (Term Term) {
-        this.Term=Term;
-        if(Term!=null) Term.setParent(this);
+    public CorrectIf (Condition Condition) {
+        this.Condition=Condition;
+        if(Condition!=null) Condition.setParent(this);
     }
 
-    public Term getTerm() {
-        return Term;
+    public Condition getCondition() {
+        return Condition;
     }
 
-    public void setTerm(Term Term) {
-        this.Term=Term;
+    public void setCondition(Condition Condition) {
+        this.Condition=Condition;
     }
 
     public void accept(Visitor visitor) {
@@ -27,32 +27,32 @@ public class PositiveExpr extends Expr {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Term!=null) Term.accept(visitor);
+        if(Condition!=null) Condition.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Term!=null) Term.traverseTopDown(visitor);
+        if(Condition!=null) Condition.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Term!=null) Term.traverseBottomUp(visitor);
+        if(Condition!=null) Condition.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("PositiveExpr(\n");
+        buffer.append("CorrectIf(\n");
 
-        if(Term!=null)
-            buffer.append(Term.toString("  "+tab));
+        if(Condition!=null)
+            buffer.append(Condition.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [PositiveExpr]");
+        buffer.append(") [CorrectIf]");
         return buffer.toString();
     }
 }

@@ -70,6 +70,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars, DoWhileDepthCounterHelper;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
+nonterminal IfStatement;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
 
@@ -198,9 +199,9 @@ Label ::= IDENT;
 
 Statements ::= (MultipleStatements) LBRACE StatementList RBRACE;
 
-Unmatched ::= (UnmatchedIf) IF LPAREN Condition RPAREN Statement
+Unmatched ::= (UnmatchedIf) IfStatement Statement
 			|
-			(UnmatchedIfElse) IF LPAREN Condition RPAREN Matched ELSE Unmatched
+			(UnmatchedIfElse) IfStatement Matched ELSE Unmatched
 			;
 
 SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
@@ -221,10 +222,16 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				|
 				(PrintStmtNumConst) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
 				|
-				(IfStmt) IF LPAREN Condition RPAREN Matched ELSE Matched
+				(IfStmt) IfStatement Matched ELSE Matched
 				|
 				(DoStmt) DO DoWhileDepthCounterHelper Statement WHILE LPAREN Condition RPAREN SEMI
 				;
+				
+IfStatement ::= (CorrectIf) IF LPAREN Condition RPAREN
+			|
+			(ErrorIf) IF LPAREN error:l
+			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :}
+			;
 
 DoWhileDepthCounterHelper ::= (DoWhileCounter) /* epsilon */;
 
@@ -245,10 +252,7 @@ FunctionName ::= (FunctionNameDesignator) Designator:funcName;
 
 Condition ::= (Conditions) Condition OR ConditionTerm
 			|
-			(SingleCondition) ConditionTerm
-			|
-			(ErrorCondition) error :l
-			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :}
+			(SingleCondition) ConditionTerm	
 			;
 
 ActPars ::= (ActualParameters) ActParams

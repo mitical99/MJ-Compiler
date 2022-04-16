@@ -6,6 +6,7 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -498,7 +499,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Return statement found outside of function!", returnExpr);
 			return;
 		}
-		if(currMethod.getType() != expr) {
+		if(currMethod.getType() == expr) {
 			returnFound = true;
 		}
 	}
@@ -625,7 +626,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		
-		ArrayList<Obj> fields = (ArrayList<Obj>) recordObj.getType().getMembers();
+		Collection<Obj> fields = recordObj.getType().getMembers();
 		
 		for(Obj field : fields) {
 			if(selectedField.equals(field.getName())) {
