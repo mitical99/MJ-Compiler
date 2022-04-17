@@ -222,10 +222,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(TypeRetMethodTypeName typeMethodName) {
 		String methodName = typeMethodName.getMethodName();
-//		if(methodName.equals("inkrement")) {
-//			if(currLineType != Tab.intType)
-//				report_info("Current line type isnt intType!", typeMethodName);
-//		}
 		if(!this.insertMethodInSymTable(methodName, typeMethodName.getType().struct)) {
 			report_error("Symbol with name " + methodName + " already exists in symbol table!", typeMethodName);
 		}
@@ -393,10 +389,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		//check type compatibility
 		if(!rightType.assignableTo(leftOperator.getType())) {
-			if(rightType != Tab.intType) {
-				report_info("Right operator isnt int type", assignStmt);
-				report_info(((Boolean)(rightType == Tab.noType)).toString(), assignStmt);
-			}
 			report_error("Incompatible types in assigment to the variable " + leftOperator.getName(), assignStmt);
 		}
 	}
