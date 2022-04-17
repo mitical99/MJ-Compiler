@@ -8,6 +8,7 @@ import rs.etf.pp1.symboltable.concepts.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -216,13 +217,19 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if(!this.insertMethodInSymTable(methodName, Tab.noType)) {
 			report_error("Symbol with name " + methodName + " already exists in symbol table!", voidMethodName);
 		}
+		voidMethodName.obj = currMethod;
 	}
 	
 	public void visit(TypeRetMethodTypeName typeMethodName) {
 		String methodName = typeMethodName.getMethodName();
-		if(!this.insertMethodInSymTable(methodName, currLineType)) {
+//		if(methodName.equals("inkrement")) {
+//			if(currLineType != Tab.intType)
+//				report_info("Current line type isnt intType!", typeMethodName);
+//		}
+		if(!this.insertMethodInSymTable(methodName, typeMethodName.getType().struct)) {
 			report_error("Symbol with name " + methodName + " already exists in symbol table!", typeMethodName);
 		}
+		typeMethodName.obj = currMethod;
 	}
 	
 	public void visit(MethodDeclaration method) {
@@ -238,10 +245,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		
 		Tab.chainLocalSymbols(currMethod);
+		Tab.closeScope();
 		returnFound = false;
 		currMethod = null;
 		formParamCount = 0;
-		Tab.closeScope();
+		
 	}
 	
 	//FORMAL PARAMETERS PROCESSING
@@ -385,14 +393,20 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		//check type compatibility
 		if(!rightType.assignableTo(leftOperator.getType())) {
+			if(rightType != Tab.intType) {
+				report_info("Right operator isnt int type", assignStmt);
+				report_info(((Boolean)(rightType == Tab.noType)).toString(), assignStmt);
+			}
 			report_error("Incompatible types in assigment to the variable " + leftOperator.getName(), assignStmt);
 		}
 	}
 	
 	
 	private boolean checkRightValueType(Obj node, SyntaxNode info) {
-		if(node == Tab.noObj)
+		if(node == Tab.noObj) {
+			report_error("Object node is noObj type!", info);
 			return false;
+		}
 		int kind = node.getKind();
 		if(kind != Obj.Var && kind != Obj.Elem && kind != Obj.Fld) {
 			report_error("Wrong right value type in operation!", info);
@@ -533,6 +547,29 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	//FUNCTIONS PROCESSING
 	
+	private boolean checkParametersCompatibility(Obj function, List<Struct> actualArgList, SyntaxNode info) {
+		List<Obj> formalArgList = new ArrayList<Obj>();
+		int paramCount = function.getLevel();
+		int formalParamCount = 0;
+		for(Iterator<Obj> iterator = function.getLocalSymbols().iterator(); iterator.hasNext() && formalParamCount < paramCount; formalParamCount++) {
+			Obj formalParam = iterator.next();
+			formalArgList.add(formalParam);
+		}
+		
+		if(formalArgList.size() != actualArgList.size()) { //should never drop here
+			report_error("Number of parameters arent same!", info);
+			return false; 
+		}
+		
+		for(int i = 0; i < actualArgList.size(); i++) {
+			if(!formalArgList.get(i).getType().compatibleWith(actualArgList.get(i))) {
+				report_error("Error in " +  i + 1 + " argument: Not compatible types!", info);
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private boolean checkFunctionCall(String functionName, SyntaxNode info) {
 		Obj function = Tab.find(functionName);
 		if(function == Tab.noObj) {
@@ -545,26 +582,23 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return false;
 		}
 		//check number of arguments
-		List<Obj> formalArgList = (List<Obj>) function.getLocalSymbols();
 		List<Struct> actualArgList = actualArgFunctionStack.pop();
 		if(actualArgList.size() != function.getLevel()) {
 			report_error("Number of formal and actuals arguments doesn't match!", info);
 			return false;
 		}
 		//check compatibility
-		for(int i = 0; i < function.getLevel(); i++) {
-			if(!actualArgList.get(i).compatibleWith(formalArgList.get(i).getType())) {
-				report_error("Error in " +  i + 1 + " argument: Not compatible types!", info);
-				return false;
-			}
+		if(!checkParametersCompatibility(function, actualArgList, info)) {
+			return false;
 		}
 		return true;
 	}
 	
 	public void visit(FactorDesignatorWithAct functionCall) {
-		String functionName = functionCall. getFunctionName().obj.getName();
+		String functionName = functionCall.getFunctionName().obj.getName();
 		Obj function = Tab.find(functionName);
 		if(!checkFunctionCall(functionName, functionCall)) {
+			functionCall.struct = Tab.noType;
 			return;
 		}
 		functionCall.struct = function.getType();
