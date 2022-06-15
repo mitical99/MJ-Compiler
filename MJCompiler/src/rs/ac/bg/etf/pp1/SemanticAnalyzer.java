@@ -39,6 +39,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
 	}
 	
+	public int getVarDeclCount() {
+		return varDeclCount;
+	}
+	
 	Logger log = Logger.getLogger(getClass());
 	
 	public void report_error(String message, SyntaxNode info) {
@@ -66,7 +70,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(Program program) {
+		varDeclCount = Tab.currentScope.getnVars();
+		
+		if(!mainFound) {
+			report_error("Main method not found", null);
+		}
+		
 		Tab.chainLocalSymbols(program.getProgName().obj);
+		
 		Tab.closeScope();
 	}
 	
@@ -174,7 +185,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private boolean checkForRecordDeclErrors(String recordName, SyntaxNode info) {
 		if(Tab.find(recordName) != Tab.noObj) {
-			report_error("Record name" + recordName + "already declared", info);
+			report_error("Record name " + recordName + " already declared", info);
 			return false;
 		}
 		return true;
@@ -305,6 +316,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if(!userDefinedRecords.containsKey(newType)) {
 			report_error("New operator can be used only on user defined records!", newFactor);
 			newFactor.struct = Tab.noType;
+			return;
 		}
 		newFactor.struct = userDefinedRecords.get(newType);
 	}

@@ -1,24 +1,21 @@
-program SveMoguce
-record r1 { int x[]; int y;}
-record r2 { int x[]; r1 obj[];}
-record r3 { int x[]; r2 obj;}
-int x[];
+program MJProgram
+	int x; int y;
 {
 
-	void main() r1 o1; r2 o2; r3 o3; r3 o3arr[];{ 
+	int k () int c; {
+		c = 2;
 		
-		x[1]++;
-		o1.x[1]++;
-		o2.obj[2].x[5]++;
-		o3.obj.obj[7].x[8]++;
+		print(0);
 		
-		o2 = o3.obj;
-		o1 = o2.obj[1];
-		o1 = o3.obj.obj[3];
+		return c+2;
+	}
+
+	int main() {
 		
-		o3arr = new r3 [5];
+		print(1);
 		
-		o3arr[1].obj.obj[2].x[3]++;
+		print(2);
 		
+		return 1;
 	}
 }
