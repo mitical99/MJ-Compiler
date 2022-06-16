@@ -1,23 +1,23 @@
 // generated with ast extension for cup
 // version 0.8
-// 15/5/2022 22:24:6
+// 16/5/2022 22:48:18
 
 
-package src.rs.ac.bg.etf.pp1.ast;
+package rs.ac.bg.etf.pp1.ast;
 
 public class IfStmt extends SingleStatement {
 
     private IfStatement IfStatement;
-    private Matched Matched;
-    private Matched Matched1;
+    private Statement Statement;
+    private IfElseBlockEnd IfElseBlockEnd;
 
-    public IfStmt (IfStatement IfStatement, Matched Matched, Matched Matched1) {
+    public IfStmt (IfStatement IfStatement, Statement Statement, IfElseBlockEnd IfElseBlockEnd) {
         this.IfStatement=IfStatement;
         if(IfStatement!=null) IfStatement.setParent(this);
-        this.Matched=Matched;
-        if(Matched!=null) Matched.setParent(this);
-        this.Matched1=Matched1;
-        if(Matched1!=null) Matched1.setParent(this);
+        this.Statement=Statement;
+        if(Statement!=null) Statement.setParent(this);
+        this.IfElseBlockEnd=IfElseBlockEnd;
+        if(IfElseBlockEnd!=null) IfElseBlockEnd.setParent(this);
     }
 
     public IfStatement getIfStatement() {
@@ -28,20 +28,20 @@ public class IfStmt extends SingleStatement {
         this.IfStatement=IfStatement;
     }
 
-    public Matched getMatched() {
-        return Matched;
+    public Statement getStatement() {
+        return Statement;
     }
 
-    public void setMatched(Matched Matched) {
-        this.Matched=Matched;
+    public void setStatement(Statement Statement) {
+        this.Statement=Statement;
     }
 
-    public Matched getMatched1() {
-        return Matched1;
+    public IfElseBlockEnd getIfElseBlockEnd() {
+        return IfElseBlockEnd;
     }
 
-    public void setMatched1(Matched Matched1) {
-        this.Matched1=Matched1;
+    public void setIfElseBlockEnd(IfElseBlockEnd IfElseBlockEnd) {
+        this.IfElseBlockEnd=IfElseBlockEnd;
     }
 
     public void accept(Visitor visitor) {
@@ -50,21 +50,21 @@ public class IfStmt extends SingleStatement {
 
     public void childrenAccept(Visitor visitor) {
         if(IfStatement!=null) IfStatement.accept(visitor);
-        if(Matched!=null) Matched.accept(visitor);
-        if(Matched1!=null) Matched1.accept(visitor);
+        if(Statement!=null) Statement.accept(visitor);
+        if(IfElseBlockEnd!=null) IfElseBlockEnd.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(IfStatement!=null) IfStatement.traverseTopDown(visitor);
-        if(Matched!=null) Matched.traverseTopDown(visitor);
-        if(Matched1!=null) Matched1.traverseTopDown(visitor);
+        if(Statement!=null) Statement.traverseTopDown(visitor);
+        if(IfElseBlockEnd!=null) IfElseBlockEnd.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(IfStatement!=null) IfStatement.traverseBottomUp(visitor);
-        if(Matched!=null) Matched.traverseBottomUp(visitor);
-        if(Matched1!=null) Matched1.traverseBottomUp(visitor);
+        if(Statement!=null) Statement.traverseBottomUp(visitor);
+        if(IfElseBlockEnd!=null) IfElseBlockEnd.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -79,14 +79,14 @@ public class IfStmt extends SingleStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(Matched!=null)
-            buffer.append(Matched.toString("  "+tab));
+        if(Statement!=null)
+            buffer.append(Statement.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(Matched1!=null)
-            buffer.append(Matched1.toString("  "+tab));
+        if(IfElseBlockEnd!=null)
+            buffer.append(IfElseBlockEnd.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

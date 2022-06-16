@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 15/5/2022 22:24:6
+// 16/5/2022 22:48:18
 
 
-package src.rs.ac.bg.etf.pp1.ast;
+package rs.ac.bg.etf.pp1.ast;
 
-public class SingleStmtLabeled extends Matched {
+public class SingleStmtLabeled extends Statement {
 
     private Label Label;
     private SingleStatement SingleStatement;

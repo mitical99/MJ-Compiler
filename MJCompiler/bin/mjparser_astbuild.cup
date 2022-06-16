@@ -97,8 +97,16 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars ActPars;
 nonterminal DoWhileDepthCounterHelper DoWhileDepthCounterHelper;
+nonterminal IfElseBlockEnd IfElseBlockEnd;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 nonterminal IfStatement IfStatement;
+nonterminal OrConditionBlockEnd OrConditionBlockEnd;
+nonterminal IfStatementEnd IfStatementEnd;
+nonterminal IfStatementStart IfStatementStart;
+nonterminal DoWhileConditionStart DoWhileConditionStart;
+nonterminal DoWhileConditionEnd DoWhileConditionEnd;
+
+precedence left ELSE;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList:P1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, P1, M2); RESULT.setLine(pleft); :};
 
@@ -211,12 +219,8 @@ StatementList ::= (StmtList) StatementList:S1 Statement:S2 {: RESULT=new StmtLis
 				(NoStmtList) {: RESULT=new NoStmtList(); :} /* epsilon */
 				;
 				
-Statement ::= (MatchedStmt) Matched:M1 {: RESULT=new MatchedStmt(M1); RESULT.setLine(M1left); :}
-			|
-			(UnmatchedStmt) Unmatched:U1 {: RESULT=new UnmatchedStmt(U1); RESULT.setLine(U1left); :}
-			;
 
-Matched 	::= (SingleStmtNoLabel) SingleStatement:S1 {: RESULT=new SingleStmtNoLabel(S1); RESULT.setLine(S1left); :}
+Statement 	::= (SingleStmtNoLabel) SingleStatement:S1 {: RESULT=new SingleStmtNoLabel(S1); RESULT.setLine(S1left); :}
 			|
 			(SingleStmtLabeled) Label:L1 COLON SingleStatement:S2 {: RESULT=new SingleStmtLabeled(L1, S2); RESULT.setLine(L1left); :}
 			|
@@ -226,11 +230,6 @@ Matched 	::= (SingleStmtNoLabel) SingleStatement:S1 {: RESULT=new SingleStmtNoLa
 Label ::= IDENT:I1 {: RESULT=new LabelDerived1(I1); RESULT.setLine(I1left); :};
 
 Statements ::= (MultipleStatements) LBRACE StatementList:S1 RBRACE {: RESULT=new MultipleStatements(S1); RESULT.setLine(S1left); :};
-
-Unmatched ::= (UnmatchedIf) IfStatement:I1 Statement:S2 {: RESULT=new UnmatchedIf(I1, S2); RESULT.setLine(I1left); :}
-			|
-			(UnmatchedIfElse) IfStatement:I1 Matched:M2 ELSE Unmatched:U3 {: RESULT=new UnmatchedIfElse(I1, M2, U3); RESULT.setLine(I1left); :}
-			;
 
 SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new DesignatorMatchedStmt(D1); RESULT.setLine(D1left); :}
 				|
@@ -250,16 +249,33 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new
 				|
 				(PrintStmtNumConst) PRINT LPAREN Expr:E1 COMMA NUMBER:width RPAREN SEMI {: RESULT=new PrintStmtNumConst(E1, width); RESULT.setLine(E1left); :}
 				|
-				(IfStmt) IfStatement:I1 Matched:M2 ELSE Matched:M3 {: RESULT=new IfStmt(I1, M2, M3); RESULT.setLine(I1left); :}
+				(IfElseStmt) IfStatement:I1 Statement:S2 ELSE IfElseBlockEnd:I3 Statement:S4 {: RESULT=new IfElseStmt(I1, S2, I3, S4); RESULT.setLine(I1left); :}
 				|
-				(DoStmt) DO DoWhileDepthCounterHelper:D1 Statement:S2 WHILE LPAREN Condition:C3 RPAREN SEMI {: RESULT=new DoStmt(D1, S2, C3); RESULT.setLine(D1left); :}
+				(IfStmt) IfStatement:I1 Statement:S2 IfElseBlockEnd:I3 {: RESULT=new IfStmt(I1, S2, I3); RESULT.setLine(I1left); :}
+				|
+				(DoStmt) DO DoWhileDepthCounterHelper:D1 Statement:S2 WHILE LPAREN DoWhileConditionStart:D3 Condition:C4 DoWhileConditionEnd:D5 RPAREN SEMI {: RESULT=new DoStmt(D1, S2, D3, C4, D5); RESULT.setLine(D1left); :}
 				;
 				
-IfStatement ::= (CorrectIf) IF LPAREN Condition:C1 RPAREN {: RESULT=new CorrectIf(C1); RESULT.setLine(C1left); :}
+IfStatement ::= (CorrectIf) IF LPAREN IfStatementStart:I1 Condition:C2 RPAREN IfStatementEnd:I3 {: RESULT=new CorrectIf(I1, C2, I3); RESULT.setLine(I1left); :}
 			|
 			(ErrorIf) IF LPAREN error:l
 			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :} {: RESULT=new ErrorIf(); :}
 			;
+
+IfStatementEnd ::= (IfBlockEnd) {: RESULT=new IfBlockEnd(); :} /* epsilon */
+				;
+				
+IfElseBlockEnd ::= (IfElseEnd) {: RESULT=new IfElseEnd(); :} /* epsilon */
+				;
+
+IfStatementStart ::= (IfBlockStart) {: RESULT=new IfBlockStart(); :} /* epsilon */
+				;
+
+DoWhileConditionStart ::= (DoWhileCondStart) {: RESULT=new DoWhileCondStart(); :} /* epsilon */
+						;
+
+DoWhileConditionEnd ::= (DoWhileCondEnd) {: RESULT=new DoWhileCondEnd(); :} /* epsilon */
+					;
 
 DoWhileDepthCounterHelper ::= (DoWhileCounter) {: RESULT=new DoWhileCounter(); :} /* epsilon */;
 
@@ -278,10 +294,13 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 Expr:E2 SEMI {:
 FunctionName ::= (FunctionNameDesignator) Designator:funcName {: RESULT=new FunctionNameDesignator(funcName); RESULT.setLine(funcNameleft); :};
 
 
-Condition ::= (Conditions) Condition:C1 OR ConditionTerm:C2 {: RESULT=new Conditions(C1, C2); RESULT.setLine(C1left); :}
+Condition ::= (Conditions) Condition:C1 OrConditionBlockEnd:O2 OR ConditionTerm:C3 {: RESULT=new Conditions(C1, O2, C3); RESULT.setLine(C1left); :}
 			|
 			(SingleCondition) ConditionTerm:C1 {: RESULT=new SingleCondition(C1); RESULT.setLine(C1left); :}	
 			;
+
+OrConditionBlockEnd ::= (OrBlockEnd) {: RESULT=new OrBlockEnd(); :} /* epsilon */
+					;
 
 ActPars ::= (ActualParameters) ActParams:A1 {: RESULT=new ActualParameters(A1); RESULT.setLine(A1left); :}
 		|

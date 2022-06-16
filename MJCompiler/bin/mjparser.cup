@@ -68,9 +68,12 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeNam
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
-nonterminal ActPars, DoWhileDepthCounterHelper;
+nonterminal ActPars, DoWhileDepthCounterHelper, IfElseBlockEnd;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
-nonterminal IfStatement;
+nonterminal IfStatement, OrConditionBlockEnd, IfStatementEnd, IfStatementStart;
+nonterminal DoWhileConditionStart, DoWhileConditionEnd;
+
+precedence left ELSE;
 
 Program ::= (Program) PROG ProgName:p ProgDeclList LBRACE MethodDeclList RBRACE;
 
@@ -183,12 +186,8 @@ StatementList ::= (StmtList) StatementList Statement
 				(NoStmtList) /* epsilon */
 				;
 				
-Statement ::= (MatchedStmt) Matched
-			|
-			(UnmatchedStmt) Unmatched
-			;
 
-Matched 	::= (SingleStmtNoLabel) SingleStatement
+Statement 	::= (SingleStmtNoLabel) SingleStatement
 			|
 			(SingleStmtLabeled) Label COLON SingleStatement
 			|
@@ -198,11 +197,6 @@ Matched 	::= (SingleStmtNoLabel) SingleStatement
 Label ::= IDENT;
 
 Statements ::= (MultipleStatements) LBRACE StatementList RBRACE;
-
-Unmatched ::= (UnmatchedIf) IfStatement Statement
-			|
-			(UnmatchedIfElse) IfStatement Matched ELSE Unmatched
-			;
 
 SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				|
@@ -222,16 +216,33 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				|
 				(PrintStmtNumConst) PRINT LPAREN Expr COMMA NUMBER:width RPAREN SEMI
 				|
-				(IfStmt) IfStatement Matched ELSE Matched
+				(IfElseStmt) IfStatement Statement ELSE IfElseBlockEnd Statement
 				|
-				(DoStmt) DO DoWhileDepthCounterHelper Statement WHILE LPAREN Condition RPAREN SEMI
+				(IfStmt) IfStatement Statement IfElseBlockEnd
+				|
+				(DoStmt) DO DoWhileDepthCounterHelper Statement WHILE LPAREN DoWhileConditionStart Condition DoWhileConditionEnd RPAREN SEMI
 				;
 				
-IfStatement ::= (CorrectIf) IF LPAREN Condition RPAREN
+IfStatement ::= (CorrectIf) IF LPAREN IfStatementStart Condition RPAREN IfStatementEnd
 			|
 			(ErrorIf) IF LPAREN error:l
 			{: parser.report_error("Izvrsen oporavak do ) u liniji " + lleft, null);  :}
 			;
+
+IfStatementEnd ::= (IfBlockEnd) /* epsilon */
+				;
+				
+IfElseBlockEnd ::= (IfElseEnd) /* epsilon */
+				;
+
+IfStatementStart ::= (IfBlockStart) /* epsilon */
+				;
+
+DoWhileConditionStart ::= (DoWhileCondStart) /* epsilon */
+						;
+
+DoWhileConditionEnd ::= (DoWhileCondEnd) /* epsilon */
+					;
 
 DoWhileDepthCounterHelper ::= (DoWhileCounter) /* epsilon */;
 
@@ -250,10 +261,13 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop Expr SEMI
 FunctionName ::= (FunctionNameDesignator) Designator:funcName;
 
 
-Condition ::= (Conditions) Condition OR ConditionTerm
+Condition ::= (Conditions) Condition OrConditionBlockEnd OR ConditionTerm
 			|
 			(SingleCondition) ConditionTerm	
 			;
+
+OrConditionBlockEnd ::= (OrBlockEnd) /* epsilon */
+					;
 
 ActPars ::= (ActualParameters) ActParams
 		|

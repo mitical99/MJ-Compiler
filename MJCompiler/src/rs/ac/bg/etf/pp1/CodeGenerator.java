@@ -8,6 +8,11 @@ import rs.ac.bg.etf.pp1.ast.AssignStmt;
 import rs.ac.bg.etf.pp1.ast.Multiply;
 import rs.ac.bg.etf.pp1.ast.FactorBoolConstant;
 import rs.ac.bg.etf.pp1.ast.ReadStmt;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
 import rs.ac.bg.etf.pp1.ast.*;
@@ -15,6 +20,14 @@ import rs.ac.bg.etf.pp1.ast.*;
 public class CodeGenerator extends VisitorAdaptor {
 
 	private int mainPC;
+	
+	private Stack<List<Integer>> patchAddressPositionsOrCondition = new Stack<>();
+	private Stack<List<Integer>> patchAddressPositionsAndCondition = new Stack<>();
+	private Stack<List<Integer>> patchAddressPositionsElseCondition = new Stack<>();
+	private Stack<Integer> doWhileStartAddresses = new Stack<>();
+	private Stack<List<Integer>> patchAddressPositionsContinueStatement = new Stack<>();
+	private Stack<List<Integer>> patchAddressPositionsBreakStatement = new Stack<>();
+
 
 	public int getMainPC() {
 		return mainPC;
@@ -120,10 +133,12 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(formParamCounter.getCount() + varCounter.getCount());
 	}
 
+	//FUNCTION PROCESSING
+	
 	public void visit(TypeRetMethodTypeName methodName) {
 		if ("main".equals(methodName.getMethodName())) {
 			mainPC = Code.pc;
-			//hehe
+			
 		}
 
 		methodName.obj.setAdr(Code.pc);
@@ -143,6 +158,46 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}
+	
+	public void visit(FuncCall functionCall) { //function call in statement, not in assignment
+		Code.put(Code.call);
+		int functionAdr = functionCall.getFunctionName().obj.getAdr();
+		Code.put2(functionAdr - Code.pc);
+		
+		if(functionCall.getFunctionName().obj.getType() != Tab.noType) { //should pop return value, so exprStack stays consistent
+			Code.put(Code.pop);
+		}
+		
+	}
+	
+	public void visit(FactorDesignatorWithAct functionCall) { // function call in assignment
+		
+		Code.put(Code.call);
+		int functionAdr = functionCall.getFunctionName().obj.getAdr();
+		
+		Code.put2(functionAdr - Code.pc);
+		
+	}
+	
+	public void visit(ReturnNoExprStmt returnExpr) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+
+	public void visit(ReturnExprStmt returnExpr) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	//PARAMETERS IN FUNCION PROCESSING
+	
+//	public void visit(FirstParam actParam) {
+//		
+//	}
+//	
+//	public void visit(MoreParameters actParam) {
+//		
+//	}
 
 	// ARITMETHIC OPERATIONS
 
@@ -198,6 +253,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	public void visit(StructFieldDesignator structDesignator) {
 		Code.load(structDesignator.getDesignator().obj);
+		
 	}
 
 	public void visit(ArrayElemDesignator arrayDesignator) {
@@ -213,4 +269,154 @@ public class CodeGenerator extends VisitorAdaptor {
 //		}
 //	}
 	
+	//CONDITION STATEMENT PROCESSING
+	
+	public void visit(OrBlockEnd orBlockEnd) {
+		Code.putJump(0); //patch later
+		
+		int patchesNeeded = patchAddressPositionsAndCondition.peek().size();
+		for(int i = 0; i < patchesNeeded; i++) {
+			int patchAdr = patchAddressPositionsAndCondition.peek().remove(0);
+			Code.fixup(patchAdr);
+		}	
+		//patchAddressPositionsAndCondition.peek().clear();
+		
+		patchAddressPositionsOrCondition.peek().add(Code.pc - 2);
+	}
+	
+	public void visit(CondFactOneExpr singleFact) {
+		Code.loadConst(1);
+		Code.putFalseJump(Code.eq, 0);
+		
+		patchAddressPositionsAndCondition.peek().add(Code.pc - 2);
+		
+	}
+	
+	public void visit(CondFactTwoExpr relationFact) {
+		SyntaxNode operation = relationFact.getRelop();
+		if(operation instanceof DoubleEqual) {
+			Code.putFalseJump(Code.eq, 0);
+		} else if(operation instanceof NotEqual) {
+			Code.putFalseJump(Code.ne, 0);
+		} else if(operation instanceof Greater) {
+			Code.putFalseJump(Code.gt, 0);
+		} else if(operation instanceof GreaterOrEqual) {
+			Code.putFalseJump(Code.ge, 0);
+		} else if(operation instanceof Less) {
+			Code.putFalseJump(Code.lt, 0);
+		} else {
+			Code.putFalseJump(Code.le, 0);
+		}
+		
+		patchAddressPositionsAndCondition.peek().add(Code.pc - 2);
+	}
+	
+	public void visit(IfBlockEnd ifBlockEnd) {
+		int orBlockPatchCount = patchAddressPositionsOrCondition.peek().size();
+		for(int i = 0; i < orBlockPatchCount; i++) {
+			int patchAdr = patchAddressPositionsOrCondition.peek().remove(0);
+			Code.fixup(patchAdr);
+		}
+	}
+	
+	public void visit(IfBlockStart ifBlockStart) {
+		patchAddressPositionsOrCondition.add(new ArrayList<>());
+		patchAddressPositionsAndCondition.add(new ArrayList<>());
+		patchAddressPositionsElseCondition.add(new ArrayList<>());
+
+	}
+	
+	public void visit(IfElseEnd ifElseBlockEnd) {
+		int andBlockPatchCount = patchAddressPositionsAndCondition.peek().size();
+		
+		for(int i = 0; i < andBlockPatchCount; i++) {
+			Code.fixup(patchAddressPositionsAndCondition.peek().remove(0));
+		}
+		
+		SyntaxNode parent = ifElseBlockEnd.getParent();
+		
+		if(parent instanceof IfElseStmt) {
+			Code.putJump(0); //patch later
+			patchAddressPositionsElseCondition.peek().add(Code.pc - 2);
+		}
+
+	}
+	
+	public void visit(IfElseStmt ifElseStmt) {
+		
+		int elseBlockPatchCount = patchAddressPositionsElseCondition.peek().size();
+		
+		for(int i = 0; i < elseBlockPatchCount; i++) {
+			Code.fixup(patchAddressPositionsElseCondition.peek().remove(0));
+		}
+		
+		this.closeCurrentConditionBlock();
+	}
+	
+	public void visit(IfStmt ifStmt) {
+		this.closeCurrentConditionBlock();
+	}
+	
+	private void closeCurrentConditionBlock() {
+		patchAddressPositionsAndCondition.pop();
+		patchAddressPositionsElseCondition.pop();
+		patchAddressPositionsOrCondition.pop();
+	}
+	
+	
+	//DO WHILE PROCESSING
+	
+	public void visit(DoWhileCounter doWhileStart) {
+		doWhileStartAddresses.push(Code.pc);
+		patchAddressPositionsContinueStatement.push(new ArrayList<>());
+		patchAddressPositionsBreakStatement.push(new ArrayList<>());
+	}
+	
+	public void visit(DoStmt doStmt) {
+		doWhileStartAddresses.pop();
+		patchAddressPositionsBreakStatement.pop();
+		patchAddressPositionsContinueStatement.pop();
+		patchAddressPositionsAndCondition.pop();
+		patchAddressPositionsOrCondition.pop();
+	}
+	
+	public void visit(DoWhileCondStart doWhileCondStart) {
+		int continueStatementPatchCount = patchAddressPositionsContinueStatement.peek().size();
+		
+		for(int i = 0; i < continueStatementPatchCount; i++) {
+			Code.fixup(patchAddressPositionsContinueStatement.peek().remove(0));
+		}
+		
+		patchAddressPositionsOrCondition.push(new ArrayList<>());
+		patchAddressPositionsAndCondition.push(new ArrayList<>());
+	}
+	
+	public void visit(DoWhileCondEnd doWhileCondEnd) {
+		
+		int doWhileStartAdr = doWhileStartAddresses.peek();
+		Code.putJump(doWhileStartAdr);
+		int breakStatementPatchCount = patchAddressPositionsBreakStatement.peek().size();
+		
+		for(int i = 0; i < breakStatementPatchCount; i++) {
+			Code.fixup(patchAddressPositionsBreakStatement.peek().remove(0));
+		}
+		
+		for(int orBlockPatchAdr : patchAddressPositionsOrCondition.peek()) {
+			Code.put2(orBlockPatchAdr, doWhileStartAdr - orBlockPatchAdr + 1);
+		}
+		
+		for(int andBlockPatchAdr : patchAddressPositionsAndCondition.peek()) {
+			Code.fixup(andBlockPatchAdr);
+		}
+	}
+	
+	public void visit(ContinueStmt continueStmt) {
+		Code.putJump(0); // patch later
+		patchAddressPositionsContinueStatement.peek().add(Code.pc - 2);
+	}
+	
+	public void visit(BreakStmt breakStmt) {
+		Code.putJump(0); // patch later
+		patchAddressPositionsBreakStatement.peek().add(Code.pc - 2);
+	}
 }
