@@ -1,19 +1,19 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/3/2022 22:58:49
+// 15/5/2022 22:24:6
 
 
-package rs.ac.bg.etf.pp1.ast;
+package src.rs.ac.bg.etf.pp1.ast;
 
 public class PrintStmtNumConst extends SingleStatement {
 
     private Expr Expr;
-    private Integer N2;
+    private Integer width;
 
-    public PrintStmtNumConst (Expr Expr, Integer N2) {
+    public PrintStmtNumConst (Expr Expr, Integer width) {
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
-        this.N2=N2;
+        this.width=width;
     }
 
     public Expr getExpr() {
@@ -24,12 +24,12 @@ public class PrintStmtNumConst extends SingleStatement {
         this.Expr=Expr;
     }
 
-    public Integer getN2() {
-        return N2;
+    public Integer getWidth() {
+        return width;
     }
 
-    public void setN2(Integer N2) {
-        this.N2=N2;
+    public void setWidth(Integer width) {
+        this.width=width;
     }
 
     public void accept(Visitor visitor) {
@@ -61,7 +61,7 @@ public class PrintStmtNumConst extends SingleStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+N2);
+        buffer.append(" "+tab+width);
         buffer.append("\n");
 
         buffer.append(tab);

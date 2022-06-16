@@ -248,7 +248,7 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement:D1 {: RESULT=new
 				|
 				(PrintStmtNoNumConst) PRINT LPAREN Expr:E1 RPAREN SEMI {: RESULT=new PrintStmtNoNumConst(E1); RESULT.setLine(E1left); :}
 				|
-				(PrintStmtNumConst) PRINT LPAREN Expr:E1 COMMA NUMBER:N2 RPAREN SEMI {: RESULT=new PrintStmtNumConst(E1, N2); RESULT.setLine(E1left); :}
+				(PrintStmtNumConst) PRINT LPAREN Expr:E1 COMMA NUMBER:width RPAREN SEMI {: RESULT=new PrintStmtNumConst(E1, width); RESULT.setLine(E1left); :}
 				|
 				(IfStmt) IfStatement:I1 Matched:M2 ELSE Matched:M3 {: RESULT=new IfStmt(I1, M2, M3); RESULT.setLine(I1left); :}
 				|

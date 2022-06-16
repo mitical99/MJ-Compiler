@@ -220,7 +220,7 @@ SingleStatement	::= (DesignatorMatchedStmt) DesignatorStatement
 				|
 				(PrintStmtNoNumConst) PRINT LPAREN Expr RPAREN SEMI
 				|
-				(PrintStmtNumConst) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+				(PrintStmtNumConst) PRINT LPAREN Expr COMMA NUMBER:width RPAREN SEMI
 				|
 				(IfStmt) IfStatement Matched ELSE Matched
 				|

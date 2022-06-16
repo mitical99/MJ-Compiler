@@ -1,9 +1,9 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/3/2022 22:58:49
+// 15/5/2022 22:24:6
 
 
-package rs.ac.bg.etf.pp1.ast;
+package src.rs.ac.bg.etf.pp1.ast;
 
 public class RecordName implements SyntaxNode {
 
