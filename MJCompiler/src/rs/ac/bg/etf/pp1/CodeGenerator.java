@@ -123,6 +123,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(TypeRetMethodTypeName methodName) {
 		if ("main".equals(methodName.getMethodName())) {
 			mainPC = Code.pc;
+			//hehe
 		}
 
 		methodName.obj.setAdr(Code.pc);
