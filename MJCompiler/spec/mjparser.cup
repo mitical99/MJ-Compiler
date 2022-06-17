@@ -251,7 +251,7 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop Expr SEMI
 					(AssignError) error SEMI:l
 					{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
 					|
-					(FuncCall) FunctionName LPAREN ActParams RPAREN SEMI
+					(FuncCall) FunctionName LPAREN ActPars RPAREN SEMI
 					|
 					(IncStmt) Designator INC SEMI
 					|

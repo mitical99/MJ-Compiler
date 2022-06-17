@@ -57,10 +57,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	// READ
 
 	public void visit(ReadStmt read) {
-		if (read.getDesignator().obj.getType() == Tab.intType) {
-			Code.put(Code.read);
-		} else {
+		if (read.getDesignator().obj.getType() == Tab.charType) {
 			Code.put(Code.bread);
+		} else {
+			Code.put(Code.read);
 		}
 
 		Code.store(read.getDesignator().obj);
@@ -162,7 +162,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(FuncCall functionCall) { //function call in statement, not in assignment
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
-		Code.put2(functionAdr - Code.pc);
+		Code.put2(functionAdr - Code.pc + 1);
 		
 		if(functionCall.getFunctionName().obj.getType() != Tab.noType) { //should pop return value, so exprStack stays consistent
 			Code.put(Code.pop);
@@ -175,7 +175,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
 		
-		Code.put2(functionAdr - Code.pc);
+		Code.put2(functionAdr - Code.pc + 1);
 		
 	}
 	
@@ -229,18 +229,39 @@ public class CodeGenerator extends VisitorAdaptor {
 	// INC AND DEC OPERATION
 
 	public void visit(IncStmt incStatement) {
-//		Code.loadConst(1);
-//		Code.put(Code.add);
-//		
-//		Code.store(incStatement.getDesignator().obj);
-
+			
+		if(incStatement.getDesignator().obj.getKind() == Obj.Fld) {
+			Code.put(Code.dup);
+			Code.load(incStatement.getDesignator().obj);
+		} else if(incStatement.getDesignator().obj.getKind() == Obj.Elem) {
+			Code.put(Code.dup2);
+			Code.load(incStatement.getDesignator().obj);
+		} else if(incStatement.getDesignator().obj.getKind() == Obj.Var) {
+			Code.load(incStatement.getDesignator().obj);
+		}	
 		Code.loadConst(1);
-		Code.put(Code.inc);
+		Code.put(Code.add);
+		
+		Code.store(incStatement.getDesignator().obj);
 	}
 
 	public void visit(DecStmt decStatement) {
-		Code.loadConst(-1);
-		Code.put(Code.inc);
+		
+		if(decStatement.getDesignator().obj.getKind() == Obj.Fld) {
+			Code.put(Code.dup);
+			Code.load(decStatement.getDesignator().obj);
+		} else if(decStatement.getDesignator().obj.getKind() == Obj.Elem) {
+			Code.put(Code.dup2);
+			Code.load(decStatement.getDesignator().obj);
+		} else if(decStatement.getDesignator().obj.getKind() == Obj.Var) {
+			Code.load(decStatement.getDesignator().obj);
+		}
+		
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		
+		Code.store(decStatement.getDesignator().obj);
+
 	}
 
 	// FACTORS
@@ -259,15 +280,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(ArrayElemDesignator arrayDesignator) {
 		Code.load(arrayDesignator.getDesignator().obj);
 	}
-
-//	public void visit(DesignatorOnly designator) {
-//		SyntaxNode parent = designator.getParent();
-//		if (parent instanceof ArrayElemDesignator) {
-//			
-//		} else if (parent instanceof StructFieldDesignator) {
-//
-//		}
-//	}
 	
 	//CONDITION STATEMENT PROCESSING
 	
@@ -326,19 +338,20 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	}
 	
-	public void visit(IfElseEnd ifElseBlockEnd) {
-		int andBlockPatchCount = patchAddressPositionsAndCondition.peek().size();
-		
-		for(int i = 0; i < andBlockPatchCount; i++) {
-			Code.fixup(patchAddressPositionsAndCondition.peek().remove(0));
-		}
-		
+	public void visit(IfElseEnd ifElseBlockEnd) {	
 		SyntaxNode parent = ifElseBlockEnd.getParent();
 		
 		if(parent instanceof IfElseStmt) {
 			Code.putJump(0); //patch later
 			patchAddressPositionsElseCondition.peek().add(Code.pc - 2);
 		}
+		
+		int andBlockPatchCount = patchAddressPositionsAndCondition.peek().size();
+		
+		for(int i = 0; i < andBlockPatchCount; i++) {
+			Code.fixup(patchAddressPositionsAndCondition.peek().remove(0));
+		}
+		
 
 	}
 	

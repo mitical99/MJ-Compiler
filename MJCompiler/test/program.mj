@@ -1,20 +1,24 @@
 program MJProgram
 	int x; int y;
+	const int z = 4;
 {
 
 	int k () int c; {
 		c = 2;
 		
-		print(0);
+		print(0, 2);
 		
 		return c+2;
 	}
 
 	int main() {
 		
-		print(1);
+		x = z - 1;
 		
-		print(2);
+		do {
+			print(x);
+			x--;
+		} while(x >= 0);
 		
 		return 1;
 	}

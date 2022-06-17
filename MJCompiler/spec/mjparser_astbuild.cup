@@ -284,7 +284,7 @@ DesignatorStatement ::= (AssignStmt) Designator:dest Assignop:A1 Expr:E2 SEMI {:
 					(AssignError) error SEMI:l
 					{: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :} {: RESULT=new AssignError(); :}
 					|
-					(FuncCall) FunctionName:F1 LPAREN ActParams:A2 RPAREN SEMI {: RESULT=new FuncCall(F1, A2); RESULT.setLine(F1left); :}
+					(FuncCall) FunctionName:F1 LPAREN ActPars:A2 RPAREN SEMI {: RESULT=new FuncCall(F1, A2); RESULT.setLine(F1left); :}
 					|
 					(IncStmt) Designator:D1 INC SEMI {: RESULT=new IncStmt(D1); RESULT.setLine(D1left); :}
 					|
