@@ -13,7 +13,11 @@ public class CounterVisitor extends VisitorAdaptor {
 	public static class FormParamCounter extends CounterVisitor {
 		
 		@Override
-		public void visit(SingleFormParam formalParameterDeclaration) {
+		public void visit(OneElemParam formalParameterDeclaration) {
+			count++;
+		}
+		
+		public void visit(ArrayParam formalParameterDeclaration) {
 			count++;
 		}
 		
@@ -21,7 +25,11 @@ public class CounterVisitor extends VisitorAdaptor {
 
 	public static class VarCounter extends CounterVisitor {
 		@Override
-		public void visit(SingleVar VarDecl) {
+		public void visit(Var varDecl) {
+			count++;
+		}
+		
+		public void visit(ArrayVar varDecl) {
 			count++;
 		}
 	}

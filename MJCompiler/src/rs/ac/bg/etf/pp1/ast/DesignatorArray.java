@@ -5,11 +5,11 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FunctionNameDesignator extends FunctionName {
+public class DesignatorArray extends ArrayName {
 
     private Designator Designator;
 
-    public FunctionNameDesignator (Designator Designator) {
+    public DesignatorArray (Designator Designator) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
     }
@@ -43,7 +43,7 @@ public class FunctionNameDesignator extends FunctionName {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FunctionNameDesignator(\n");
+        buffer.append("DesignatorArray(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -52,7 +52,7 @@ public class FunctionNameDesignator extends FunctionName {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FunctionNameDesignator]");
+        buffer.append(") [DesignatorArray]");
         return buffer.toString();
     }
 }

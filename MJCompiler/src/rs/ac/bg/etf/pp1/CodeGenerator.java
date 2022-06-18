@@ -160,6 +160,15 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(FuncCall functionCall) { //function call in statement, not in assignment
+		
+		String funcName = functionCall.getFunctionName().obj.getName();
+		if("ord".equals(funcName) || "chr".equals(funcName)) {
+			return;
+		}
+		if("len".equals(funcName)) {
+			Code.put(Code.arraylength);
+			return;
+		}
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
 		Code.put2(functionAdr - Code.pc + 1);
@@ -171,6 +180,15 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(FactorDesignatorWithAct functionCall) { // function call in assignment
+		
+		String funcName = functionCall.getFunctionName().obj.getName();
+		if("ord".equals(funcName) || "chr".equals(funcName)) {
+			return;
+		}
+		if("len".equals(funcName)) {
+			Code.put(Code.arraylength);
+			return;
+		}
 		
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
@@ -269,6 +287,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(FactorDesignatorOnly factorDesignator) {
 		Code.load(factorDesignator.getDesignator().obj);
 	}
+	
+	public void visit(NegativeExpr negExpr) {
+		Code.put(Code.neg);
+	}
 
 	// DESIGNATOR
 
@@ -277,7 +299,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		
 	}
 
-	public void visit(ArrayElemDesignator arrayDesignator) {
+	public void visit(DesignatorArray arrayDesignator) {
 		Code.load(arrayDesignator.getDesignator().obj);
 	}
 	

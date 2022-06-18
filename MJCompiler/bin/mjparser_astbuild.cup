@@ -94,6 +94,7 @@ nonterminal DesignatorFieldList DesignatorFieldList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ArrayName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars ActPars;
 nonterminal DoWhileDepthCounterHelper DoWhileDepthCounterHelper;
@@ -357,10 +358,12 @@ Factor ::= (FactorDesignatorOnly) Designator:d {: RESULT=new FactorDesignatorOnl
 
 Designator ::= (StructFieldDesignator) Designator:D1 DOT IDENT:field {: RESULT=new StructFieldDesignator(D1, field); RESULT.setLine(D1left); :}
 			|
-			(ArrayElemDesignator) Designator:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ArrayElemDesignator(D1, E2); RESULT.setLine(D1left); :}
+			(ArrayElemDesignator) ArrayName:A1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ArrayElemDesignator(A1, E2); RESULT.setLine(A1left); :}
 			|
 			(DesignatorOnly) IDENT:name {: RESULT=new DesignatorOnly(name); RESULT.setLine(nameleft); :}
 			;
+			
+ArrayName ::= (DesignatorArray) Designator:D1 {: RESULT=new DesignatorArray(D1); RESULT.setLine(D1left); :};
 
 
 Assignop ::= EQUAL {: RESULT=new AssignopDerived1(); :};

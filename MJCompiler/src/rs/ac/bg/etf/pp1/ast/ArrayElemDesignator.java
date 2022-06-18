@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/5/2022 16:38:12
+// 17/5/2022 21:52:38
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ArrayElemDesignator extends Designator {
 
-    private Designator Designator;
+    private ArrayName ArrayName;
     private Expr Expr;
 
-    public ArrayElemDesignator (Designator Designator, Expr Expr) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public ArrayElemDesignator (ArrayName ArrayName, Expr Expr) {
+        this.ArrayName=ArrayName;
+        if(ArrayName!=null) ArrayName.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public ArrayName getArrayName() {
+        return ArrayName;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setArrayName(ArrayName ArrayName) {
+        this.ArrayName=ArrayName;
     }
 
     public Expr getExpr() {
@@ -38,18 +38,18 @@ public class ArrayElemDesignator extends Designator {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(ArrayName!=null) ArrayName.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(ArrayName!=null) ArrayName.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(ArrayName!=null) ArrayName.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -59,8 +59,8 @@ public class ArrayElemDesignator extends Designator {
         buffer.append(tab);
         buffer.append("ArrayElemDesignator(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(ArrayName!=null)
+            buffer.append(ArrayName.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

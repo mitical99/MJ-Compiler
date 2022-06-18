@@ -67,6 +67,7 @@ nonterminal Relop, Mulop, Addop, DesignatorFieldList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodTypeName, MethodDecl, Designator, VarDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclLineList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj RecordName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ArrayName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj FunctionName;
 nonterminal ActPars, DoWhileDepthCounterHelper, IfElseBlockEnd;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
@@ -324,10 +325,12 @@ Factor ::= (FactorDesignatorOnly) Designator:d
 
 Designator ::= (StructFieldDesignator) Designator DOT IDENT:field
 			|
-			(ArrayElemDesignator) Designator LBRACKET Expr RBRACKET
+			(ArrayElemDesignator) ArrayName LBRACKET Expr RBRACKET
 			|
 			(DesignatorOnly) IDENT:name
 			;
+			
+ArrayName ::= (DesignatorArray) Designator;
 
 
 Assignop ::= EQUAL;
