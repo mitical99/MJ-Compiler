@@ -61,5 +61,6 @@ public class sym_old {
 	
 	public static final int EOF = 50;
 	public static final int VOID = 51;
+	public static final int DOTS = 52;
 	
 }

@@ -54,6 +54,7 @@ terminal Integer NUMBER;
 terminal String IDENT;
 terminal Boolean BOOL;
 terminal Character CHAR;
+terminal DOTS;
 
 nonterminal ProgDeclList, ProgDecl, MethodDeclList, VarDeclList;
 nonterminal ConstDecl, ConstDeclLineList, ClassDeclLine, RecordDeclLine,  DesignatorField;
@@ -73,6 +74,7 @@ nonterminal ActPars, DoWhileDepthCounterHelper, IfElseBlockEnd;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MulFactorList;
 nonterminal IfStatement, OrConditionBlockEnd, IfStatementEnd, IfStatementStart;
 nonterminal DoWhileConditionStart, DoWhileConditionEnd;
+nonterminal VarParams;
 
 precedence left ELSE;
 
@@ -166,6 +168,10 @@ MethodTypeName ::= (NoRetMethodTypeName) VOID IDENT:methodName
 
 FormPars ::= (FormParameters) FormParams
 		 |
+		 (FormAndVarParams) FormParams VarParams
+		 |
+		 (OnlyVarParams) VarParams
+		 |
 		 (NoFormParams) /* epsilon */
 		 ;
 
@@ -181,6 +187,8 @@ OneFormParam ::= (ArrayParam) Type IDENT:paramName LBRACKET RBRACKET
 				|
 				(OneElemParam) Type IDENT:paramName
 				;
+
+VarParams ::= (VarArgs) COMMA Type DOTS IDENT:paramName;
 
 StatementList ::= (StmtList) StatementList Statement
 				|

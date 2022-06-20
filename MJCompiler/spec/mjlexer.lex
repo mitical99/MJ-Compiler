@@ -59,6 +59,7 @@ import java_cup.runtime.Symbol;
 "true" 		{return new_symbol(sym.BOOL, true); }
 "false"		{return new_symbol(sym.BOOL, false); }
 '.' 		{return new_symbol(sym.CHAR, yytext().charAt(1)); }
+"..."		{return new_symbol(sym.DOTS, yytext()); }
 "++" 		{return new_symbol(sym.INC, yytext()); }
 "--" 		{return new_symbol(sym.DEC, yytext()); }
 "*" 		{return new_symbol(sym.MUL, yytext()); }

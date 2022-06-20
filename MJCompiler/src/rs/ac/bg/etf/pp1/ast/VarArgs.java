@@ -1,20 +1,19 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/5/2022 21:59:8
+// 18/5/2022 21:59:9
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class VarDeclArray extends VarDeclLine {
+public class VarArgs extends VarParams {
 
     private Type Type;
-    private VarDeclLineList VarDeclLineList;
+    private String paramName;
 
-    public VarDeclArray (Type Type, VarDeclLineList VarDeclLineList) {
+    public VarArgs (Type Type, String paramName) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
-        this.VarDeclLineList=VarDeclLineList;
-        if(VarDeclLineList!=null) VarDeclLineList.setParent(this);
+        this.paramName=paramName;
     }
 
     public Type getType() {
@@ -25,12 +24,12 @@ public class VarDeclArray extends VarDeclLine {
         this.Type=Type;
     }
 
-    public VarDeclLineList getVarDeclLineList() {
-        return VarDeclLineList;
+    public String getParamName() {
+        return paramName;
     }
 
-    public void setVarDeclLineList(VarDeclLineList VarDeclLineList) {
-        this.VarDeclLineList=VarDeclLineList;
+    public void setParamName(String paramName) {
+        this.paramName=paramName;
     }
 
     public void accept(Visitor visitor) {
@@ -39,25 +38,22 @@ public class VarDeclArray extends VarDeclLine {
 
     public void childrenAccept(Visitor visitor) {
         if(Type!=null) Type.accept(visitor);
-        if(VarDeclLineList!=null) VarDeclLineList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Type!=null) Type.traverseTopDown(visitor);
-        if(VarDeclLineList!=null) VarDeclLineList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Type!=null) Type.traverseBottomUp(visitor);
-        if(VarDeclLineList!=null) VarDeclLineList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("VarDeclArray(\n");
+        buffer.append("VarArgs(\n");
 
         if(Type!=null)
             buffer.append(Type.toString("  "+tab));
@@ -65,14 +61,11 @@ public class VarDeclArray extends VarDeclLine {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(VarDeclLineList!=null)
-            buffer.append(VarDeclLineList.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
+        buffer.append(" "+tab+paramName);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [VarDeclArray]");
+        buffer.append(") [VarArgs]");
         return buffer.toString();
     }
 }

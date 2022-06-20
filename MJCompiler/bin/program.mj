@@ -2,9 +2,7 @@ program ABC
 {
 
 	void main() int x; {
-	
-		read(x);
 		
-		print(x + 1);
+		print(ord('a'));
 	}
 }

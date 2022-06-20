@@ -5,21 +5,21 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class SingleFactor extends MulFactorList {
+public class OnlyVarParams extends FormPars {
 
-    private Factor Factor;
+    private VarParams VarParams;
 
-    public SingleFactor (Factor Factor) {
-        this.Factor=Factor;
-        if(Factor!=null) Factor.setParent(this);
+    public OnlyVarParams (VarParams VarParams) {
+        this.VarParams=VarParams;
+        if(VarParams!=null) VarParams.setParent(this);
     }
 
-    public Factor getFactor() {
-        return Factor;
+    public VarParams getVarParams() {
+        return VarParams;
     }
 
-    public void setFactor(Factor Factor) {
-        this.Factor=Factor;
+    public void setVarParams(VarParams VarParams) {
+        this.VarParams=VarParams;
     }
 
     public void accept(Visitor visitor) {
@@ -27,32 +27,32 @@ public class SingleFactor extends MulFactorList {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Factor!=null) Factor.accept(visitor);
+        if(VarParams!=null) VarParams.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Factor!=null) Factor.traverseTopDown(visitor);
+        if(VarParams!=null) VarParams.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Factor!=null) Factor.traverseBottomUp(visitor);
+        if(VarParams!=null) VarParams.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("SingleFactor(\n");
+        buffer.append("OnlyVarParams(\n");
 
-        if(Factor!=null)
-            buffer.append(Factor.toString("  "+tab));
+        if(VarParams!=null)
+            buffer.append(VarParams.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [SingleFactor]");
+        buffer.append(") [OnlyVarParams]");
         return buffer.toString();
     }
 }

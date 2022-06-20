@@ -55,12 +55,12 @@ Test t1, t2;
 			else print(-1); 
 		t1 = new Test;	
 		t1.a = 2;	
-		t1.niz = new int[3];
-		t1.niz[0] = 1 * t1.a;
-		t1.niz[1] = 2 * t1.a;
-		t1.niz[2] = sum(t1.niz[1], t1.niz[0]) * t1.a + 1;
-		if(verify() || t1.niz[2] == 4) print(ord('A')); 
-		else print(ord('a'));
+		t1.niz = new int[3]; 
+		t1.niz[0] = 1 * t1.a; //2
+		t1.niz[1] = 2 * t1.a; //4
+		t1.niz[2] = sum(t1.niz[1], t1.niz[0]) * t1.a + 1; //13
+		if(verify() || t1.niz[2] == 4) print(ord('A')); //63
+		else print(ord('a')); //97
 		
 		print(eol);
 		i = 0;
@@ -77,22 +77,22 @@ Test t1, t2;
 		if(i == 3 && verify()) print(-4);
 		else print(4);  
 		
-		read(t1.niz[0]);
-		read(t1.niz[1]);
-		read(t1.niz[2]);
+		read(t1.niz[0]); //5 
+		read(t1.niz[1]); //10
+		read(t1.niz[2]); //15
 		print(eol);
 		
-		print(sum (sum(t1.niz[0], t1.niz[1]), t1.niz[2])); 
+		print(sum (sum(t1.niz[0], t1.niz[1]), t1.niz[2])); //5 + 10 + 15=30
 			
 		print(eol); 
-		print(inkrement(t1.niz[2], 2));
+		print(inkrement(t1.niz[2], 2)); //30
 		
 		t2 = new Test;
 		t2.a = 3;
 		t2.niz = new int[3];
 		i = 0;
 		do{
-			t2.niz[i] = t1.niz[i] * 2 * t2.a;
+			t2.niz[i] = t1.niz[i] * 2 * t2.a; // 0: 30, 1: 60, 2: 90
 			i++;
 		}while (i < 3);
 		print(t2.niz[0]);
@@ -103,7 +103,7 @@ Test t1, t2;
 		i = 0;
 		niz2 = 0;
 		do{
-			niz2 = niz2 + t1.niz[i] * t2.niz[i];
+			niz2 = niz2 + t1.niz[i] * t2.niz[i];// 0 + 5 * 30 = 150, 150 + 10 * 60 = 750, 750 + 90 * 15 = 2100
 			i++;
 		}while (i < 3);
 		print(niz2);
