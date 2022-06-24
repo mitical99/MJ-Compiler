@@ -21,6 +21,10 @@ public class CounterVisitor extends VisitorAdaptor {
 			count++;
 		}
 		
+		public void visit(VarArgs formalParameterDeclaration) {
+			count++;
+		}
+		
 	}
 
 	public static class VarCounter extends CounterVisitor {
@@ -32,5 +36,6 @@ public class CounterVisitor extends VisitorAdaptor {
 		public void visit(ArrayVar varDecl) {
 			count++;
 		}
+		
 	}
 }

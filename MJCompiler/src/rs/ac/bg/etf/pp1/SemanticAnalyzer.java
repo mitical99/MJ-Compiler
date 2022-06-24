@@ -22,6 +22,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private int doWhileCounter = 0;
 	private Stack<List<Struct>> actualArgFunctionStack = new Stack<List<Struct>>();
 	private Map<String, Struct> userDefinedRecords = new HashMap<String, Struct>();
+	private Map<String, Obj> variableArgFunctions = new HashMap<>();
 	private Struct currLineType = null;
 	private Struct currRecord = null;
 	private Obj currMethod = null;
@@ -273,6 +274,20 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ArrayParam arrayParam) {
 		String paramName = arrayParam.getParamName();
 		if(!this.checkForVarDeclErrors(paramName, arrayParam)) {
+			return;
+		}
+		Struct varType = new Struct(Struct.Array, currLineType);
+		Obj paramNode = Tab.insert(Obj.Var, paramName, varType);
+		formParamCount++;
+	}
+	
+	//VAR ARGUMENTS IN FUNCTION DECLARATION
+	
+	public void visit(VarArgs varArguments) {
+		variableArgFunctions.put(currMethod.getName(), currMethod);
+		
+		String paramName = varArguments.getParamName();
+		if(!this.checkForVarDeclErrors(paramName, varArguments)) {
 			return;
 		}
 		Struct varType = new Struct(Struct.Array, currLineType);
@@ -574,6 +589,31 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		return true;
 	}
 	
+	private boolean checkParameterCompatibilityVarArgFunction(Obj function, List<Struct> actualArgList, SyntaxNode info) {
+		List<Obj> formalArgList = new ArrayList<Obj>();
+		int formParamCountFunction = function.getLevel();
+		int count = 0;
+		for(Iterator<Obj> iterator = function.getLocalSymbols().iterator(); iterator.hasNext() && count < formParamCountFunction; count++) {
+			formalArgList.add(iterator.next());
+		}
+		
+		for(int i = 0; i < formalArgList.size() - 1; i++) { //check compatibility with all arguments besides var argument which is at the end
+			if(!formalArgList.get(i).getType().compatibleWith(actualArgList.get(i))) {
+				report_error("Error in " +  (i + 1) + " argument: Not compatible types!", info);
+				return false;
+			}
+		}
+		int lastArgumentIndex = formalArgList.size() - 1;
+		for(int i = lastArgumentIndex; i < actualArgList.size(); i++) {
+			if(!formalArgList.get(lastArgumentIndex).getType().getElemType().compatibleWith(actualArgList.get(i))) {
+				report_error("Error in " +  (i + 1) + " argument: Not compatible types!", info);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	private boolean checkFunctionCall(String functionName, SyntaxNode info) {
 		Obj function = Tab.find(functionName);
 		if(function == Tab.noObj) {
@@ -588,13 +628,22 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		//check number of arguments
 		List<Struct> actualArgList = actualArgFunctionStack.pop();
 		if(actualArgList.size() != function.getLevel()) {
+			if(variableArgFunctions.get(functionName) == null) {
 			report_error("Number of formal and actuals arguments doesn't match!", info);
 			return false;
+			}
 		}
 		//check compatibility
-		if(!checkParametersCompatibility(function, actualArgList, info)) {
-			return false;
+		if(variableArgFunctions.get(functionName) == null) {
+			if(!checkParametersCompatibility(function, actualArgList, info)) {
+				return false;
+			}
+		} else {
+			if(!checkParameterCompatibilityVarArgFunction(function, actualArgList, info)) {
+				return false;
+			}
 		}
+
 		return true;
 	}
 	

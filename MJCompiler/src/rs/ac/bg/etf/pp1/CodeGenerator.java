@@ -4,13 +4,16 @@ import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 import rs.ac.bg.etf.pp1.ast.AssignStmt;
 import rs.ac.bg.etf.pp1.ast.Multiply;
 import rs.ac.bg.etf.pp1.ast.FactorBoolConstant;
 import rs.ac.bg.etf.pp1.ast.ReadStmt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
@@ -21,6 +24,13 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	private int mainPC;
 	
+	private int formParamCountCurrMethod = 0;
+	private Stack<Integer> actualParamCountCurrMethodStack = new Stack<>();
+	private int actualParamCountCurrMethod = 0;
+	private Struct methodVarArgType = null;
+	private Map<String, Struct> varArgMethodType = new HashMap<>();
+	private Map<String, Integer> varArgsMethodFormParamCount = new HashMap<>();
+	private boolean methodWithVarArgs = false;
 	private Stack<List<Integer>> patchAddressPositionsOrCondition = new Stack<>();
 	private Stack<List<Integer>> patchAddressPositionsAndCondition = new Stack<>();
 	private Stack<List<Integer>> patchAddressPositionsElseCondition = new Stack<>();
@@ -130,10 +140,16 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		Code.put(Code.enter);
 		Code.put(formParamCounter.getCount());
+		formParamCountCurrMethod = formParamCounter.getCount();
 		Code.put(formParamCounter.getCount() + varCounter.getCount());
 	}
 
 	//FUNCTION PROCESSING
+	
+	public void visit(VarArgs varArg) {
+		methodWithVarArgs = true;
+		methodVarArgType = varArg.getType().struct;
+	}
 	
 	public void visit(TypeRetMethodTypeName methodName) {
 		if ("main".equals(methodName.getMethodName())) {
@@ -151,12 +167,56 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		Code.put(Code.enter);
 		Code.put(formParamCounter.getCount());
+		formParamCountCurrMethod = formParamCounter.getCount();
 		Code.put(formParamCounter.getCount() + varCounter.getCount());
 	}
 
 	public void visit(MethodDeclaration method) {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
+		if(methodWithVarArgs) {
+			varArgsMethodFormParamCount.put(method.getMethodTypeName().obj.getName(), formParamCountCurrMethod);
+			varArgMethodType.put(method.getMethodTypeName().obj.getName(), methodVarArgType);
+		}
+		
+		methodVarArgType = null;
+		methodWithVarArgs = false;
+		formParamCountCurrMethod = 0;
+	}
+	
+	public void visit(FunctionNameDesignator funcCallName) {
+		if(varArgsMethodFormParamCount.containsKey(funcCallName.obj.getName())) {
+			methodWithVarArgs = true;
+			//actualParamCountCurrMethod = 0;
+			actualParamCountCurrMethodStack.push(0);
+		}
+	}
+	
+	private void prepareVarArgMethodCall(String funcName) {
+		int formalParamCount = varArgsMethodFormParamCount.get(funcName);
+		int arraySize = actualParamCountCurrMethodStack.peek() - formalParamCount + 1;
+		
+		Code.loadConst(arraySize);
+		Code.put(Code.newarray);
+		if(varArgMethodType.get(funcName) == Tab.charType) {
+			Code.put(0);
+		} else {
+			Code.put(1);
+		}
+		
+		for(int i = arraySize - 1; i >= 0; i--) { // ..., __, adr.array -- __ is current actual parameter value
+			Code.put(Code.dup_x1); // ..., adr.array, __, adr.array
+			Code.put(Code.dup_x1); // ..., adr.array, adr.array, __, adr.array
+			Code.loadConst(i); // ..., adr.array, adr.array, __, adr.array, index
+			Code.put(Code.dup_x2); //..., adr.array, adr.array, index, __, adr.array, index
+			Code.put(Code.pop); //..., adr.array, adr.array, index, __, adr.array
+			Code.put(Code.pop); //..., adr.array, adr.array, index, __
+			if(varArgMethodType.get(funcName) == Tab.charType) { //..., adr.array
+				Code.put(Code.bastore);
+			} else {
+				Code.put(Code.astore);
+			}
+		}
 	}
 	
 	public void visit(FuncCall functionCall) { //function call in statement, not in assignment
@@ -169,6 +229,12 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.arraylength);
 			return;
 		}
+		
+		if(methodWithVarArgs) {
+			this.prepareVarArgMethodCall(funcName);
+		}
+		
+		
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
 		Code.put2(functionAdr - Code.pc + 1);
@@ -176,7 +242,13 @@ public class CodeGenerator extends VisitorAdaptor {
 		if(functionCall.getFunctionName().obj.getType() != Tab.noType) { //should pop return value, so exprStack stays consistent
 			Code.put(Code.pop);
 		}
-		
+		if(methodWithVarArgs) {
+			actualParamCountCurrMethodStack.pop();
+			if(actualParamCountCurrMethodStack.isEmpty()) {		
+				methodWithVarArgs = false;
+				//actualParamCountCurrMethod = 0;
+			}	
+		}
 	}
 	
 	public void visit(FactorDesignatorWithAct functionCall) { // function call in assignment
@@ -190,11 +262,21 @@ public class CodeGenerator extends VisitorAdaptor {
 			return;
 		}
 		
+		if(methodWithVarArgs) {
+			this.prepareVarArgMethodCall(funcName);
+		}
+		
 		Code.put(Code.call);
 		int functionAdr = functionCall.getFunctionName().obj.getAdr();
 		
 		Code.put2(functionAdr - Code.pc + 1);
-		
+		if(methodWithVarArgs) {
+			actualParamCountCurrMethodStack.pop();
+			if(actualParamCountCurrMethodStack.isEmpty()) {		
+				methodWithVarArgs = false;
+				//actualParamCountCurrMethod = 0;
+			}	
+		}
 	}
 	
 	public void visit(ReturnNoExprStmt returnExpr) {
@@ -209,13 +291,21 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	//PARAMETERS IN FUNCION PROCESSING
 	
-//	public void visit(FirstParam actParam) {
-//		
-//	}
-//	
-//	public void visit(MoreParameters actParam) {
-//		
-//	}
+	public void visit(FirstParam actParam) {
+		if(methodWithVarArgs) {	
+			int numParam = actualParamCountCurrMethodStack.pop();
+			actualParamCountCurrMethodStack.push(++numParam);
+			//actualParamCountCurrMethod++;
+		}
+	}
+	
+	public void visit(MoreParameters actParam) {
+		if(methodWithVarArgs) {	
+			int numParam = actualParamCountCurrMethodStack.pop();
+			actualParamCountCurrMethodStack.push(++numParam);
+			//actualParamCountCurrMethod++;
+		}
+	}
 
 	// ARITMETHIC OPERATIONS
 

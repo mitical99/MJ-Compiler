@@ -168,7 +168,7 @@ MethodTypeName ::= (NoRetMethodTypeName) VOID IDENT:methodName
 
 FormPars ::= (FormParameters) FormParams
 		 |
-		 (FormAndVarParams) FormParams VarParams
+		 (FormAndVarParams) FormParams COMMA VarParams
 		 |
 		 (OnlyVarParams) VarParams
 		 |
@@ -188,7 +188,7 @@ OneFormParam ::= (ArrayParam) Type IDENT:paramName LBRACKET RBRACKET
 				(OneElemParam) Type IDENT:paramName
 				;
 
-VarParams ::= (VarArgs) COMMA Type DOTS IDENT:paramName;
+VarParams ::= (VarArgs) Type DOTS IDENT:paramName;
 
 StatementList ::= (StmtList) StatementList Statement
 				|

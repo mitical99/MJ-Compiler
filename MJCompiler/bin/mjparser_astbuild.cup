@@ -201,7 +201,7 @@ MethodTypeName ::= (NoRetMethodTypeName) VOID IDENT:methodName {: RESULT=new NoR
 
 FormPars ::= (FormParameters) FormParams:F1 {: RESULT=new FormParameters(F1); RESULT.setLine(F1left); :}
 		 |
-		 (FormAndVarParams) FormParams:F1 VarParams:V2 {: RESULT=new FormAndVarParams(F1, V2); RESULT.setLine(F1left); :}
+		 (FormAndVarParams) FormParams:F1 COMMA VarParams:V2 {: RESULT=new FormAndVarParams(F1, V2); RESULT.setLine(F1left); :}
 		 |
 		 (OnlyVarParams) VarParams:V1 {: RESULT=new OnlyVarParams(V1); RESULT.setLine(V1left); :}
 		 |
@@ -221,7 +221,7 @@ OneFormParam ::= (ArrayParam) Type:T1 IDENT:paramName LBRACKET RBRACKET {: RESUL
 				(OneElemParam) Type:T1 IDENT:paramName {: RESULT=new OneElemParam(T1, paramName); RESULT.setLine(T1left); :}
 				;
 
-VarParams ::= (VarArgs) COMMA Type:T1 DOTS IDENT:paramName {: RESULT=new VarArgs(T1, paramName); RESULT.setLine(T1left); :};
+VarParams ::= (VarArgs) Type:T1 DOTS IDENT:paramName {: RESULT=new VarArgs(T1, paramName); RESULT.setLine(T1left); :};
 
 StatementList ::= (StmtList) StatementList:S1 Statement:S2 {: RESULT=new StmtList(S1, S2); RESULT.setLine(S1left); :}
 				|
